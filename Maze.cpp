@@ -2,10 +2,208 @@
 // Created by Yilin Zhang on 11/17/20.
 //
 
+#include <fstream>
+#include <iostream>
 #include "Maze.h"
 #include "Utils.h"
 
 ECE_Maze::ECE_Maze()
+{
+    initializeWall();
+    initializeObjects();
+}
+
+ECE_Maze::~ECE_Maze(){}
+
+void ECE_Maze::display()
+{
+    // get color
+    auto colorRGB = colorToRGBf(color);
+    float colorR = colorRGB[0];
+    float colorG = colorRGB[1];
+    float colorB = colorRGB[2];
+    glColor3f(colorR, colorG, colorB);
+
+    auto quadratic = gluNewQuadric();
+
+    for (auto &brick : wall)
+    {
+        auto coordinate = positionToCoordinate(brick.x, brick.y);
+        auto x = coordinate[0];
+        auto y = coordinate[1];
+
+
+        switch(brick.type)
+        {
+            case BrickType::I:
+                switch(brick.rotation)
+                {
+                    case BrickRotation::Up:
+                    case BrickRotation::Down:
+                        displayHalfBrick(x, y, BrickRotation::Up);
+                        displayHalfBrick(x, y, BrickRotation::Down);
+                        break;
+                    case BrickRotation::Left:
+                    case BrickRotation::Right:
+                        displayHalfBrick(x, y, BrickRotation::Left);
+                        displayHalfBrick(x, y, BrickRotation::Right);
+                        break;
+
+                }
+                break;
+            case BrickType::L:
+                // draw the vertical bar
+                switch(brick.rotation)
+                {
+                    case BrickRotation::Up:
+                        displayHalfBrick(x, y, BrickRotation::Up);
+                        displayHalfBrick(x, y, BrickRotation::Right);
+                        break;
+                    case BrickRotation::Down:
+                        displayHalfBrick(x, y, BrickRotation::Left);
+                        displayHalfBrick(x, y, BrickRotation::Down);
+                        break;
+                    case BrickRotation::Left:
+                        displayHalfBrick(x, y, BrickRotation::Left);
+                        displayHalfBrick(x, y, BrickRotation::Up);
+                        break;
+                    case BrickRotation::Right:
+                        displayHalfBrick(x, y, BrickRotation::Right);
+                        displayHalfBrick(x, y, BrickRotation::Down);
+                        break;
+                }
+                break;
+            case BrickType::T:
+                // draw the long horizontal bar
+                switch(brick.rotation)
+                {
+                    case BrickRotation::Up:
+                        displayHalfBrick(x, y, BrickRotation::Down);
+                        displayHalfBrick(x, y, BrickRotation::Left);
+                        displayHalfBrick(x, y, BrickRotation::Right);
+                        break;
+                    case BrickRotation::Down:
+                        displayHalfBrick(x, y, BrickRotation::Up);
+                        displayHalfBrick(x, y, BrickRotation::Left);
+                        displayHalfBrick(x, y, BrickRotation::Right);
+                        break;
+                    case BrickRotation::Left:
+                        displayHalfBrick(x, y, BrickRotation::Up);
+                        displayHalfBrick(x, y, BrickRotation::Down);
+                        displayHalfBrick(x, y, BrickRotation::Right);
+                        break;
+                    case BrickRotation::Right:
+                        displayHalfBrick(x, y, BrickRotation::Up);
+                        displayHalfBrick(x, y, BrickRotation::Down);
+                        displayHalfBrick(x, y, BrickRotation::Left);
+                        break;
+                }
+                break;
+            case BrickType::i:
+                switch(brick.rotation)
+                {
+                    case BrickRotation::Up:
+                        displayHalfBrick(x, y, BrickRotation::Up);
+                        break;
+                    case BrickRotation::Down:
+                        displayHalfBrick(x, y, BrickRotation::Down);
+                        break;
+                    case BrickRotation::Left:
+                        displayHalfBrick(x, y, BrickRotation::Left);
+                        break;
+                    case BrickRotation::Right:
+                        displayHalfBrick(x, y, BrickRotation::Right);
+                        break;
+                }
+                break;
+        }
+    }
+}
+
+void ECE_Maze::displayHalfBrick(int x, int y, BrickRotation rotation)
+{
+    auto quadratic = gluNewQuadric();
+    auto coordinate = positionToCoordinate(x, y);
+    glPushMatrix();
+    switch (rotation)
+    {
+        case BrickRotation::Up:
+            glTranslatef(coordinate[0], coordinate[1]+GRID_SIZE/4.f, 0.0);
+            glTranslatef(0.0, GRID_SIZE/4.f, 0.0);
+            glRotatef(90, 1.0, 0.0, 0.0);
+            break;
+        case BrickRotation::Down:
+            glTranslatef(coordinate[0], coordinate[1]-GRID_SIZE/4.f, 0.0);
+            glTranslatef(0.0, GRID_SIZE/4.f, 0.0);
+            glRotatef(90, 1.0, 0.0, 0.0);
+            break;
+        case BrickRotation::Left:
+            glTranslatef(coordinate[0]-GRID_SIZE/4.f, coordinate[1], 0.0);
+            glTranslatef(-GRID_SIZE/4.f, 0.0, 0.0);
+            glRotatef(90, 0.0, 1.0, 0.0);
+            break;
+        case BrickRotation::Right:
+            glTranslatef(coordinate[0]+GRID_SIZE/4.f, coordinate[1], 0.0);
+            glTranslatef(-GRID_SIZE/4.f, 0.0, 0.0);
+            glRotatef(90, 0.0, 1.0, 0.0);
+            break;
+    }
+    gluCylinder(quadratic, GRID_SIZE/7.f, GRID_SIZE/7.f, GRID_SIZE/2.f, 10, 8);
+    glPopMatrix();
+
+}
+
+bool ECE_Maze::validatePosition(int x, int y)
+{
+    if (x < 0 || x >= MAZE_COLS || y < 0 || y >= MAZE_ROWS)
+        return false;
+
+    // Note that the order of x and y is revered
+    return !(initialMap[y][x] == NoPath);
+}
+
+void ECE_Maze::initializeObjects()
+{
+    // initialize map file
+    std::fstream mapFile;
+    mapFile.open(MAP_PATH);
+
+    // parse the map file
+    std::string line;
+
+    for (int i=MAZE_ROWS-1; i>=0; --i)
+    {
+        mapFile >> line;
+        for (int j=0; j<MAZE_COLS; ++j)
+        {
+            ObjectType type;
+            switch(line[j])
+            {
+                case '*':
+                    type = Coin;
+                    break;
+                case 'o':
+                    type = Power;
+                    break;
+                case 'O':
+                    type = Path;
+                    break;
+                case '@':
+                    type = Pacman;
+                    break;
+                case 'G':
+                    type = Ghost;
+                    break;
+                case '#':
+                default:
+                    type = NoPath;
+            }
+            initialMap[i][j] = type;
+        }
+    }
+}
+
+void ECE_Maze::initializeWall()
 {
     // initialize the wall
     wall.push_back(Brick{-1, -1,  BrickType::L, BrickRotation::Up});
@@ -240,144 +438,4 @@ ECE_Maze::ECE_Maze()
     wall.push_back(Brick{8,   20, BrickType::T, BrickRotation::Up});
 
     color = ECE_Color::BLUE;
-}
-
-ECE_Maze::~ECE_Maze(){}
-
-void ECE_Maze::display()
-{
-    // get color
-    auto colorRGB = colorToRGBf(color);
-    float colorR = colorRGB[0];
-    float colorG = colorRGB[1];
-    float colorB = colorRGB[2];
-    glColor3f(colorR, colorG, colorB);
-
-    auto quadratic = gluNewQuadric();
-
-    for (auto &brick : wall)
-    {
-        auto coordinate = positionToCoordinate(brick.x, brick.y);
-        auto x = coordinate[0];
-        auto y = coordinate[1];
-
-
-        switch(brick.type)
-        {
-            case BrickType::I:
-                switch(brick.rotation)
-                {
-                    case BrickRotation::Up:
-                    case BrickRotation::Down:
-                        displayHalfBrick(x, y, BrickRotation::Up);
-                        displayHalfBrick(x, y, BrickRotation::Down);
-                        break;
-                    case BrickRotation::Left:
-                    case BrickRotation::Right:
-                        displayHalfBrick(x, y, BrickRotation::Left);
-                        displayHalfBrick(x, y, BrickRotation::Right);
-                        break;
-
-                }
-                break;
-            case BrickType::L:
-                // draw the vertical bar
-                switch(brick.rotation)
-                {
-                    case BrickRotation::Up:
-                        displayHalfBrick(x, y, BrickRotation::Up);
-                        displayHalfBrick(x, y, BrickRotation::Right);
-                        break;
-                    case BrickRotation::Down:
-                        displayHalfBrick(x, y, BrickRotation::Left);
-                        displayHalfBrick(x, y, BrickRotation::Down);
-                        break;
-                    case BrickRotation::Left:
-                        displayHalfBrick(x, y, BrickRotation::Left);
-                        displayHalfBrick(x, y, BrickRotation::Up);
-                        break;
-                    case BrickRotation::Right:
-                        displayHalfBrick(x, y, BrickRotation::Right);
-                        displayHalfBrick(x, y, BrickRotation::Down);
-                        break;
-                }
-                break;
-            case BrickType::T:
-                // draw the long horizontal bar
-                switch(brick.rotation)
-                {
-                    case BrickRotation::Up:
-                        displayHalfBrick(x, y, BrickRotation::Down);
-                        displayHalfBrick(x, y, BrickRotation::Left);
-                        displayHalfBrick(x, y, BrickRotation::Right);
-                        break;
-                    case BrickRotation::Down:
-                        displayHalfBrick(x, y, BrickRotation::Up);
-                        displayHalfBrick(x, y, BrickRotation::Left);
-                        displayHalfBrick(x, y, BrickRotation::Right);
-                        break;
-                    case BrickRotation::Left:
-                        displayHalfBrick(x, y, BrickRotation::Up);
-                        displayHalfBrick(x, y, BrickRotation::Down);
-                        displayHalfBrick(x, y, BrickRotation::Right);
-                        break;
-                    case BrickRotation::Right:
-                        displayHalfBrick(x, y, BrickRotation::Up);
-                        displayHalfBrick(x, y, BrickRotation::Down);
-                        displayHalfBrick(x, y, BrickRotation::Left);
-                        break;
-                }
-                break;
-            case BrickType::i:
-                switch(brick.rotation)
-                {
-                    case BrickRotation::Up:
-                        displayHalfBrick(x, y, BrickRotation::Up);
-                        break;
-                    case BrickRotation::Down:
-                        displayHalfBrick(x, y, BrickRotation::Down);
-                        break;
-                    case BrickRotation::Left:
-                        displayHalfBrick(x, y, BrickRotation::Left);
-                        break;
-                    case BrickRotation::Right:
-                        displayHalfBrick(x, y, BrickRotation::Right);
-                        break;
-                }
-                break;
-        }
-    }
-}
-
-void ECE_Maze::displayHalfBrick(int x, int y, BrickRotation rotation)
-{
-    auto quadratic = gluNewQuadric();
-    auto coordinate = positionToCoordinate(x, y);
-    glPushMatrix();
-    switch (rotation)
-    {
-        case BrickRotation::Up:
-            glTranslatef(coordinate[0], coordinate[1]+GRID_SIZE/4.f, 0.0);
-            glTranslatef(0.0, GRID_SIZE/4.f, 0.0);
-            glRotatef(90, 1.0, 0.0, 0.0);
-            break;
-        case BrickRotation::Down:
-            glTranslatef(coordinate[0], coordinate[1]-GRID_SIZE/4.f, 0.0);
-            glTranslatef(0.0, GRID_SIZE/4.f, 0.0);
-            glRotatef(90, 1.0, 0.0, 0.0);
-            break;
-        case BrickRotation::Left:
-            glTranslatef(coordinate[0]-GRID_SIZE/4.f, coordinate[1], 0.0);
-            glTranslatef(-GRID_SIZE/4.f, 0.0, 0.0);
-            glRotatef(90, 0.0, 1.0, 0.0);
-            break;
-        case BrickRotation::Right:
-            glTranslatef(coordinate[0]+GRID_SIZE/4.f, coordinate[1], 0.0);
-            glTranslatef(-GRID_SIZE/4.f, 0.0, 0.0);
-            glRotatef(90, 0.0, 1.0, 0.0);
-            break;
-    }
-    gluCylinder(quadratic, GRID_SIZE/7.f, GRID_SIZE/7.f, GRID_SIZE/2.f, 10, 8);
-    glPopMatrix();
-
 }

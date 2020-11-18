@@ -11,14 +11,14 @@ OpenGL execution
 #include "Maze.h"
 
 // initialize the objects to show
-ECE_Ghost ghost_1(7, 10, ECE_Color::GREEN);
-ECE_Ghost ghost_2(8, 10, ECE_Color::PINK);
-ECE_Ghost ghost_3(9, 10, ECE_Color::ORANGE);
-ECE_Ghost ghost_4(8, 10, ECE_Color::RED);
-ECE_Pacman pacman(8, 4);
+ECE_Maze maze;
+ECE_Ghost ghost_1(maze, 7, 10, ECE_Color::GREEN);
+ECE_Ghost ghost_2(maze, 8, 10, ECE_Color::PINK);
+ECE_Ghost ghost_3(maze, 9, 10, ECE_Color::ORANGE);
+ECE_Ghost ghost_4(maze, 8, 10, ECE_Color::RED);
+ECE_Pacman pacman(maze, 8, 4);
 std::vector<ECE_Coin> coins;
 std::vector<ECE_Power> powers;
-ECE_Maze maze;
 
 // initialize the center coordinate and the distance to the center
 int angle = 300;
@@ -47,19 +47,19 @@ void init(void)
     {
         for (auto &y : coinPositions[x])
         {
-            coins.push_back(ECE_Coin(x, y));
-            coins.push_back(ECE_Coin(16-x, y));
+            coins.push_back(ECE_Coin(maze, x, y));
+            coins.push_back(ECE_Coin(maze, 16-x, y));
         }
 
     }
     for (auto &y : coinPositions[8])
-        coins.push_back(ECE_Coin(8, y));
+        coins.push_back(ECE_Coin(maze, 8, y));
 
     // powers initialization
-    powers.push_back(ECE_Power(0, 4));
-    powers.push_back(ECE_Power(0, 18));
-    powers.push_back(ECE_Power(16, 4));
-    powers.push_back(ECE_Power(16, 18));
+    powers.push_back(ECE_Power(maze, 0, 4));
+    powers.push_back(ECE_Power(maze, 0, 18));
+    powers.push_back(ECE_Power(maze, 16, 4));
+    powers.push_back(ECE_Power(maze, 16, 18));
 
 }
 
@@ -112,6 +112,31 @@ void keyboard(unsigned char key, int x, int y)
         angle = (angle + 5) % 360;
         glutPostRedisplay();
     }
+    else if (key == 'w')
+    {
+        int step = 1;
+        pacman.move(UP, step);
+        glutPostRedisplay();
+    }
+    else if (key == 's')
+    {
+        int step = 1;
+        pacman.move(DOWN, step);
+        glutPostRedisplay();
+    }
+    else if (key == 'a')
+    {
+        int step = 1;
+        pacman.move(LEFT, step);
+        glutPostRedisplay();
+    }
+    else if (key == 'd')
+    {
+        int step = 1;
+        pacman.move(RIGHT, step);
+        glutPostRedisplay();
+    }
+
 }
 
 int main(int argc, char** argv)

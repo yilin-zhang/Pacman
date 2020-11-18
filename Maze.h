@@ -4,6 +4,7 @@
 
 #pragma once
 #include <vector>
+#include <array>
 #include "Config.h"
 
 
@@ -15,6 +16,7 @@ public:
 
     // display the Maze
     void display();
+    bool validatePosition(int x, int y);
 private:
     enum BrickType {I, T, L, i};
     enum BrickRotation {Up, Down, Left, Right};
@@ -26,9 +28,17 @@ private:
         BrickRotation rotation;
     };
 
+    enum ObjectType {Coin, Power, Ghost, Pacman, Path, NoPath};
+
     // display a half of the brick, whose length is half of the grid size
     void displayHalfBrick(int x, int y, BrickRotation rotation);
 
+    void initializeObjects();
+    void initializeWall();
+
+
     std::vector<Brick> wall;
     ECE_Color color;
+
+    std::array<std::array<ObjectType, MAZE_COLS>, MAZE_ROWS> initialMap;
 };
