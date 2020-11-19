@@ -26,6 +26,8 @@ public:
      */
     void setPosition(float x, float y);
 
+    void getPosition(float &x, float &y) const;
+
     /** Set the color of the object
      * @param color
      */

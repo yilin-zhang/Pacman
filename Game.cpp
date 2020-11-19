@@ -4,6 +4,7 @@
 
 #include "Game.h"
 #include <iostream>
+#include <cmath>
 
 Game::Game():
 pacman(map, 8.f, 4.f)
@@ -88,23 +89,51 @@ void Game::display()
 
 void Game::keyboard(unsigned char key)
 {
+    if (!(key == 'w' || key == 's' || key == 'a' || key == 'd'))
+        return;
+
     switch(key)
     {
         case 'w':
             pacman.move(UP, 0.2);
-            glutPostRedisplay();
             break;
         case 's':
             pacman.move(DOWN, 0.2);
-            glutPostRedisplay();
             break;
         case 'a':
             pacman.move(LEFT, 0.2);
-            glutPostRedisplay();
             break;
         case 'd':
             pacman.move(RIGHT, 0.2);
-            glutPostRedisplay();
             break;
+    }
+
+    check();
+    glutPostRedisplay();
+}
+
+void Game::check()
+{
+    // check the situation
+
+    // 1. check if the pacman is close to a coin
+    // remove the coin if they are close
+    const float DISTANCE_THRESHOLD = 0.5f;
+    float coinPosX, coinPosY;
+    float pacmanPosX, pacmanPosY;
+
+    pacman.getPosition(pacmanPosX, pacmanPosY);
+    for (auto &coin : coins)
+    {
+        if (coin)
+        {
+            coin->getPosition(coinPosX, coinPosY);
+
+            if (sqrt(pow(pacmanPosX - coinPosX, 2) + pow(pacmanPosY - coinPosY, 2)) < DISTANCE_THRESHOLD)
+            {
+                delete coin;
+                coin = nullptr;
+            }
+        }
     }
 }

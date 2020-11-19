@@ -29,8 +29,6 @@ private:
         BrickRotation rotation;
     };
 
-    enum ObjectType {Coin, Power, Ghost, Pacman, Path, NoPath};
-
     // display a half of the brick, whose length is half of the grid size
     void displayHalfBrick(int x, int y, BrickRotation rotation);
 

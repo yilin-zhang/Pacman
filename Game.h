@@ -19,6 +19,8 @@ public:
     void keyboard(unsigned char key);
 
 private:
+    void check();
+
     ECE_Map map;
     ECE_Maze maze;
     ECE_Pacman pacman;

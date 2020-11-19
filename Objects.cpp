@@ -41,6 +41,12 @@ void ECE_Object::setPosition(float x, float y)
         this->y = y;
 }
 
+void ECE_Object::getPosition(float &x, float &y) const
+{
+    x = this->x;
+    y = this->y;
+}
+
 void ECE_Object::setColor(ECE_Color color)
 {
     this->color = color;
