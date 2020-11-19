@@ -11,7 +11,8 @@ pacman(map, 8.f, 4.f),
 ghosts(),
 coins(),
 powers(),
-isPoweredUp(false)
+isPoweredUp(false),
+isWin(false)
 {
     // initialize the ghosts
     ghosts[0] = new ECE_Ghost(map, 7.f, 10.f, ghostColors[0]);
@@ -29,7 +30,7 @@ isPoweredUp(false)
     coinPositions[4] = {0, 4, 6, 16, 19};
     coinPositions[5] = {0, 2, 3, 4, 6, 14, 15, 16, 19};
     coinPositions[6] = {0, 2, 4, 6, 14, 16, 19};
-    coinPositions[7] = {0, 2, 3, 5, 6, 7, 14, 16, 17, 18, 19};
+    coinPositions[7] = {0, 1, 2, 4, 5, 6, 14, 16, 17, 18, 19};
     coinPositions[8] = {0, 16};
     int coinsCounter = 0;
     for (int x=0; x<=7; ++x)
@@ -72,6 +73,13 @@ void Game::updateState()
     // update the states
     pacman.updateState();
     check();
+
+    // TODO: this is just a place holder
+    if (isWin)
+    {
+        pacman.setColor(ECE_Color::GREEN);
+        std::cout << "win!" << std::endl;
+    }
 
     // check if powered up
     if (isPoweredUp)
@@ -136,11 +144,20 @@ void Game::check()
 {
     // 1. check if the pacman is close to a coin or a power
     // remove the coin if they are close
-    const float DISTANCE_THRESHOLD = 0.5f;
+    checkCoins();
+    checkPowers();
+
+    // 2. check if the board is clear
+    checkClear();
+}
+
+void Game::checkCoins()
+{
     float pacmanX, pacmanY;
     float x, y;
 
     pacman.getPosition(pacmanX, pacmanY);
+
     for (auto &coin : coins)
     {
         if (coin)
@@ -154,6 +171,14 @@ void Game::check()
             }
         }
     }
+}
+
+void Game::checkPowers()
+{
+    float pacmanX, pacmanY;
+    float x, y;
+
+    pacman.getPosition(pacmanX, pacmanY);
 
     for (auto &power : powers)
     {
@@ -172,6 +197,23 @@ void Game::check()
             }
         }
     }
+}
+
+void Game::checkClear()
+{
+    for (auto &coin : coins)
+    {
+        if (coin)
+            return;
+    }
+
+    for (auto &power : powers)
+    {
+        if (power)
+            return;
+    }
+
+    isWin = true;
 }
 
 void Game::setPowerUp(bool isPowerUp)

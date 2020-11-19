@@ -83,7 +83,6 @@ void Timer::start(float ms)
     counter = 0;
     isCounting = true;
     finished = false;
-    std::cout << "maxVal: " << maxVal << std::endl;
 }
 
 void Timer::update()

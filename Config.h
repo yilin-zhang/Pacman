@@ -24,6 +24,9 @@ const int MAZE_ROWS = 20;
 const int MAZE_COLS = 17;
 const float GRID_SIZE = 1.0;
 
+// the range threshold in which the two objects are considered touching each other
+const float DISTANCE_THRESHOLD = 0.5f;
+
 // TODO: optimize this
 const std::string MAP_PATH = "/Users/yilin/Desktop/pacman/map.txt";
 
