@@ -45,9 +45,11 @@ public:
 protected:
 
     /** Get the coordinate of the object according to the current position
-     * @return an array of the current position
+     *
+     * @param cX
+     * @param cY
      */
-    std::array<float, 2> getCoordinate() const;
+    void getCoordinate(float &cX, float &cY) const;
 
     float x, y;  // the logical position on the map
     ECE_Color color;  // the color of the object

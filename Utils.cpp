@@ -4,38 +4,66 @@
 
 #include "Utils.h"
 
-std::array<float, 3> colorToRGBf(ECE_Color color)
+void colorToRGBf(ECE_Color color, float &red, float &green, float &blue)
 {
     switch(color)
     {
         case ECE_Color::RED:
-            return {1.f, 0.f, 0.f};
+            red = 1.f;
+            green = 0.f;
+            blue = 0.f;
+            break;
         case ECE_Color::GREEN:
-            return {0.f, 1.f, 0.f};
+            red = 0.f;
+            green = 1.f;
+            blue = 0.f;
+            break;
         case ECE_Color::YELLOW:
-            return {1.f, 1.f, 0.f};
+            red = 1.f;
+            green = 1.f;
+            blue = 0.f;
+            break;
         case ECE_Color::ORANGE:
-            return {1.f, 165.f/255.f, 0.f};
+            red = 1.f;
+            green = 165.f/255.f;
+            blue = 0.f;
+            break;
         case ECE_Color::PINK:
-            return {1.f, 192.f/255.f, 203.f/255.f};
+            red = 1.f;
+            green = 192.f/255.f;
+            blue = 203.f/255.f;
+            break;
         case ECE_Color::WHITE:
-            return {1.f, 1.f, 1.f};
+            red = 1.f;
+            green = 1.f;
+            blue = 1.f;
+            break;
         case ECE_Color::SILVER:
-            return {0.5f, 0.5f, 0.5f};
+            red = 0.5f;
+            green = 0.5f;
+            blue = 0.5f;
+            break;
         case ECE_Color::GOLDEN:
-            return {218.f/255.f, 165.f/255.f, 32.f/255.f};
+            red = 218.f/255.f;
+            green = 165.f/255.f;
+            blue = 32.f/255.f;
+            break;
         case ECE_Color::BLUE:
-            return {0.f, 0.f, 1.f};
+            red = 0.f;
+            green = 0.f;
+            blue = 1.f;
+            break;
         case ECE_Color::BLACK:
         default:
-            return {0.f, 0.f, 0.f};
+            red = 0.f;
+            green = 0.f;
+            blue = 1.f;
     }
 }
 
-std::array<float, 2> positionToCoordinate(float x, float y)
+void positionToCoordinate(float x, float y, float &cX, float &cY)
 {
     float halfGridSize = GRID_SIZE / 2.f;
-    float cX = x * GRID_SIZE;
-    float cY = y * GRID_SIZE;
-    return {cX, cY};
+    cX = x * GRID_SIZE;
+    cY = y * GRID_SIZE;
 }

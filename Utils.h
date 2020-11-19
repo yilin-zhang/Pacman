@@ -6,5 +6,6 @@
 #include <array>
 #include "Config.h"
 
-std::array<float, 3> colorToRGBf(ECE_Color color);
-std::array<float, 2> positionToCoordinate(float x, float y);
+void colorToRGBf(ECE_Color color, float &red, float &green, float &blue);
+
+void positionToCoordinate(float x, float y, float &cX, float &cY);

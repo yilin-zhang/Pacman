@@ -17,20 +17,15 @@ ECE_Maze::~ECE_Maze(){}
 void ECE_Maze::display()
 {
     // get color
-    auto colorRGB = colorToRGBf(color);
-    float colorR = colorRGB[0];
-    float colorG = colorRGB[1];
-    float colorB = colorRGB[2];
-    glColor3f(colorR, colorG, colorB);
+    float colorR, colorG, colorB;
+    colorToRGBf(color, colorR, colorG, colorB);
 
-    auto quadratic = gluNewQuadric();
+    glColor3f(colorR, colorG, colorB);
 
     for (auto &brick : wall)
     {
-        auto coordinate = positionToCoordinate(brick.x, brick.y);
-        auto x = coordinate[0];
-        auto y = coordinate[1];
-
+        float x, y;
+        positionToCoordinate(brick.x, brick.y, x, y);
 
         switch(brick.type)
         {
@@ -122,27 +117,28 @@ void ECE_Maze::display()
 void ECE_Maze::displayHalfBrick(int x, int y, BrickRotation rotation)
 {
     auto quadratic = gluNewQuadric();
-    auto coordinate = positionToCoordinate(x, y);
+    float cX, cY;
+    positionToCoordinate(x, y, cX, cY);
     glPushMatrix();
     switch (rotation)
     {
         case BrickRotation::Up:
-            glTranslatef(coordinate[0], coordinate[1]+GRID_SIZE/4.f, 0.0);
+            glTranslatef(cX, cY+GRID_SIZE/4.f, 0.0);
             glTranslatef(0.0, GRID_SIZE/4.f, 0.0);
             glRotatef(90, 1.0, 0.0, 0.0);
             break;
         case BrickRotation::Down:
-            glTranslatef(coordinate[0], coordinate[1]-GRID_SIZE/4.f, 0.0);
+            glTranslatef(cX, cY-GRID_SIZE/4.f, 0.0);
             glTranslatef(0.0, GRID_SIZE/4.f, 0.0);
             glRotatef(90, 1.0, 0.0, 0.0);
             break;
         case BrickRotation::Left:
-            glTranslatef(coordinate[0]-GRID_SIZE/4.f, coordinate[1], 0.0);
+            glTranslatef(cX-GRID_SIZE/4.f, cY, 0.0);
             glTranslatef(-GRID_SIZE/4.f, 0.0, 0.0);
             glRotatef(90, 0.0, 1.0, 0.0);
             break;
         case BrickRotation::Right:
-            glTranslatef(coordinate[0]+GRID_SIZE/4.f, coordinate[1], 0.0);
+            glTranslatef(cX+GRID_SIZE/4.f, cY, 0.0);
             glTranslatef(-GRID_SIZE/4.f, 0.0, 0.0);
             glRotatef(90, 0.0, 1.0, 0.0);
             break;

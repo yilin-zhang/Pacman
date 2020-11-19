@@ -19,9 +19,9 @@ ECE_Object::ECE_Object(ECE_Map &map, float x, float y, ECE_Color color)
     : map(map), x(x), y(y), color(color) {}
 ECE_Object::~ECE_Object(){}
 
-std::array<float, 2> ECE_Object::getCoordinate() const
+void ECE_Object::getCoordinate(float &cX, float &cY) const
 {
-    return positionToCoordinate(x, y);
+    positionToCoordinate(x, y, cX, cY);
 }
 
 void ECE_Object::setPosition(float x, float y)
@@ -133,20 +133,16 @@ ECE_Ghost::~ECE_Ghost(){}
 void ECE_Ghost::display()
 {
     // get coordinate
-    auto coordinate = getCoordinate();
-    float cX = coordinate[0];
-    float cY = coordinate[1];
-
+    float cX, cY;
+    getCoordinate(cX, cY);
     display(cX, cY);
 }
 
 void ECE_Ghost::display(float cX, float cY)
 {
     // get color
-    auto colorRGB = colorToRGBf(color);
-    float colorR = colorRGB[0];
-    float colorG = colorRGB[1];
-    float colorB = colorRGB[2];
+    float colorR, colorG, colorB;
+    colorToRGBf(color, colorR, colorG, colorB);
     glColor3f(colorR, colorG, colorB);
 
     auto quadratic = gluNewQuadric();
@@ -173,15 +169,13 @@ ECE_Pacman::~ECE_Pacman(){}
 void ECE_Pacman::display()
 {
     // get coordinate
-    auto coordinate = getCoordinate();
-    float cX = coordinate[0];
-    float cY = coordinate[1];
+    float cX, cY;
+    getCoordinate(cX, cY);
 
     // get color
-    auto colorRGB = colorToRGBf(color);
-    float colorR = colorRGB[0];
-    float colorG = colorRGB[1];
-    float colorB = colorRGB[2];
+    float colorR, colorG, colorB;
+    colorToRGBf(color, colorR, colorG, colorB);
+
     glColor3f(colorR, colorG, colorB);
 
     auto quadratic = gluNewQuadric();
@@ -205,15 +199,12 @@ ECE_Coin::~ECE_Coin(){}
 void ECE_Coin::display()
 {
     // get coordinate
-    auto coordinate = getCoordinate();
-    float cX = coordinate[0];
-    float cY = coordinate[1];
+    float cX, cY;
+    getCoordinate(cX, cY);
 
     // get color
-    auto colorRGB = colorToRGBf(color);
-    float colorR = colorRGB[0];
-    float colorG = colorRGB[1];
-    float colorB = colorRGB[2];
+    float colorR, colorG, colorB;
+    colorToRGBf(color, colorR, colorG, colorB);
 
     glColor3f(colorR, colorG, colorB);
 
@@ -235,15 +226,13 @@ ECE_Power::~ECE_Power(){}
 void ECE_Power::display()
 {
     // get coordinate
-    auto coordinate = getCoordinate();
-    float cX = coordinate[0];
-    float cY = coordinate[1];
+    float cX, cY;
+    getCoordinate(cX, cY);
 
     // get color
-    auto colorRGB = colorToRGBf(color);
-    float colorR = colorRGB[0];
-    float colorG = colorRGB[1];
-    float colorB = colorRGB[2];
+    float colorR, colorG, colorB;
+    colorToRGBf(color, colorR, colorG, colorB);
+
     glColor3f(colorR, colorG, colorB);
     auto quadratic = gluNewQuadric();
 
