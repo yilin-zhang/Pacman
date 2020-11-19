@@ -20,6 +20,7 @@ public:
 
 private:
     void check();
+    void setPowerUp(bool isPowerUp);
 
     ECE_Map map;
     ECE_Maze maze;
@@ -27,5 +28,7 @@ private:
     std::array<ECE_Ghost*, 4> ghosts;
     std::array<ECE_Coin*, 152> coins;
     std::array<ECE_Power*, 4> powers;
+
+    bool isPoweredUp;
 };
 

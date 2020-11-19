@@ -14,10 +14,9 @@ Class definitions
 /// ECE_Object
 //////////////////////////////////////////////////
 
-ECE_Object::ECE_Object(ECE_Map &map) : map(map), x(0.f), y(0.f), color(ECE_Color::WHITE) {}
 ECE_Object::ECE_Object(ECE_Map &map, float x, float y, ECE_Color color)
     : map(map), x(x), y(y), color(color) {}
-ECE_Object::~ECE_Object(){}
+ECE_Object::~ECE_Object()= default;
 
 void ECE_Object::getCoordinate(float &cX, float &cY) const
 {
@@ -126,9 +125,8 @@ void ECE_Object::move(Direction direction, float distance)
 /// ECE_Ghost
 //////////////////////////////////////////////////
 
-ECE_Ghost::ECE_Ghost(ECE_Map &map):ECE_Object(map){}
 ECE_Ghost::ECE_Ghost(ECE_Map &map, float x, float y, ECE_Color color):ECE_Object(map, x, y, color){}
-ECE_Ghost::~ECE_Ghost(){}
+ECE_Ghost::~ECE_Ghost()= default;
 
 void ECE_Ghost::display()
 {
@@ -162,9 +160,9 @@ void ECE_Ghost::display(float cX, float cY)
 /// ECE_Pacman
 //////////////////////////////////////////////////
 
-ECE_Pacman::ECE_Pacman(ECE_Map &map):ECE_Object(map, 0, 0, ECE_Color::YELLOW){}
-ECE_Pacman::ECE_Pacman(ECE_Map &map, float x, float y):ECE_Object(map, x, y, ECE_Color::YELLOW){}
-ECE_Pacman::~ECE_Pacman(){}
+ECE_Pacman::ECE_Pacman(ECE_Map &map, float x, float y):
+ECE_Object(map, x, y, ECE_Color::YELLOW){}
+ECE_Pacman::~ECE_Pacman()= default;
 
 void ECE_Pacman::display()
 {
@@ -192,9 +190,8 @@ void ECE_Pacman::display()
 /// ECE_Coin
 //////////////////////////////////////////////////
 
-ECE_Coin::ECE_Coin(ECE_Map &map):ECE_Object(map, 0, 0, ECE_Color::SILVER){}
 ECE_Coin::ECE_Coin(ECE_Map &map, float x, float y):ECE_Object(map, x, y, ECE_Color::SILVER){}
-ECE_Coin::~ECE_Coin(){}
+ECE_Coin::~ECE_Coin()= default;
 
 void ECE_Coin::display()
 {
@@ -219,9 +216,8 @@ void ECE_Coin::display()
 /// ECE_Power
 //////////////////////////////////////////////////
 
-ECE_Power::ECE_Power(ECE_Map &map):ECE_Object(map, 0, 0, ECE_Color::GOLDEN){}
 ECE_Power::ECE_Power(ECE_Map &map, float x, float y):ECE_Object(map, x, y, ECE_Color::GOLDEN){}
-ECE_Power::~ECE_Power(){}
+ECE_Power::~ECE_Power()= default;
 
 void ECE_Power::display()
 {

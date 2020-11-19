@@ -6,7 +6,8 @@
 #include <fstream>
 #include <ctgmath>
 
-ECE_Map::ECE_Map()
+ECE_Map::ECE_Map():
+initialMap()
 {
     initializeObjects();
 }

@@ -7,7 +7,10 @@
 #include <cmath>
 
 Game::Game():
-pacman(map, 8.f, 4.f)
+pacman(map, 8.f, 4.f),
+ghosts(),
+coins(),
+powers()
 {
     // initialize the ghosts
     ghosts[0] = new ECE_Ghost(map, 7.f, 10.f, ECE_Color::GREEN);
@@ -114,26 +117,53 @@ void Game::keyboard(unsigned char key)
 
 void Game::check()
 {
-    // check the situation
-
-    // 1. check if the pacman is close to a coin
+    // 1. check if the pacman is close to a coin or a power
     // remove the coin if they are close
     const float DISTANCE_THRESHOLD = 0.5f;
-    float coinPosX, coinPosY;
-    float pacmanPosX, pacmanPosY;
+    float pacmanX, pacmanY;
+    float x, y;
 
-    pacman.getPosition(pacmanPosX, pacmanPosY);
+    pacman.getPosition(pacmanX, pacmanY);
     for (auto &coin : coins)
     {
         if (coin)
         {
-            coin->getPosition(coinPosX, coinPosY);
+            coin->getPosition(x, y);
 
-            if (sqrt(pow(pacmanPosX - coinPosX, 2) + pow(pacmanPosY - coinPosY, 2)) < DISTANCE_THRESHOLD)
+            if (sqrt(pow(pacmanX - x, 2) + pow(pacmanY - y, 2)) < DISTANCE_THRESHOLD)
             {
                 delete coin;
                 coin = nullptr;
             }
         }
+    }
+
+    for (auto &power : powers)
+    {
+        if (power)
+        {
+            power->getPosition(x, y);
+
+            if (sqrt(pow(pacmanX - x, 2) + pow(pacmanY - y, 2)) < DISTANCE_THRESHOLD)
+            {
+                // remove the powerup
+                delete power;
+                power = nullptr;
+
+                // TODO: should add a timer to set it false after 5 seconds
+                setPowerUp(true);
+            }
+        }
+    }
+}
+
+void Game::setPowerUp(bool isPowerUp)
+{
+    if (isPowerUp)
+    {
+        for (auto & ghost : ghosts)
+            ghost->setColor(ECE_Color::WHITE);
+
+        isPoweredUp = true;
     }
 }

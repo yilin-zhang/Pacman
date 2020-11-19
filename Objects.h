@@ -17,7 +17,6 @@ class ECE_Object
 {
 public:
     ECE_Object(ECE_Map &map, float x, float y, ECE_Color color);
-    ECE_Object(ECE_Map &map);
     ~ECE_Object();
 
     /** Set the current position
@@ -59,7 +58,6 @@ protected:
 class ECE_Ghost : public ECE_Object{
 public:
     ECE_Ghost(ECE_Map &map, float x, float y, ECE_Color color);
-    ECE_Ghost(ECE_Map &map);
     ~ECE_Ghost();
     void display() override;
 
@@ -74,7 +72,6 @@ class ECE_Pacman : public ECE_Object
 {
 public:
     ECE_Pacman(ECE_Map &map, float x, float y);
-    ECE_Pacman(ECE_Map &map);
     ~ECE_Pacman();
     void display() override;
 };
@@ -83,7 +80,6 @@ class ECE_Coin : public ECE_Object
 {
 public:
     ECE_Coin(ECE_Map &map, float x, float y);
-    ECE_Coin(ECE_Map &map);
     ~ECE_Coin();
     void display() override;
 };
@@ -92,7 +88,6 @@ class ECE_Power : public ECE_Object
 {
 public:
     ECE_Power(ECE_Map &map, float x, float y);
-    ECE_Power(ECE_Map &map);
     ~ECE_Power();
     void display() override;
 };
