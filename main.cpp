@@ -7,21 +7,11 @@ OpenGL execution
 */
 
 #include <cmath>
-#include "Objects.h"
-#include "Maze.h"
+#include "Game.h"
 
 // initialize the objects to show
-ECE_Maze maze;
-ECE_Map map;
-ECE_Ghost ghost_1(map, 7.f, 10.f, ECE_Color::GREEN);
-ECE_Ghost ghost_2(map, 8.f, 10.f, ECE_Color::PINK);
-ECE_Ghost ghost_3(map, 9.f, 10.f, ECE_Color::ORANGE);
-ECE_Ghost ghost_4(map, 8.f, 10.5, ECE_Color::RED);
-ECE_Pacman pacman(map, 8.f, 4.f);
-std::vector<ECE_Coin> coins;
-std::vector<ECE_Power> powers;
+Game game;
 
-// initialize the center coordinate and the distance to the center
 int angle = 300;
 const float centerX = static_cast<float>(MAZE_COLS) / 2.f;
 const float centerY = static_cast<float>(MAZE_ROWS) / 2.f;
@@ -32,36 +22,6 @@ void init(void)
     // OpenGL initialization
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glShadeModel(GL_SMOOTH);
-
-    // coins initialization
-    std::vector<std::vector<int>> coinPositions(17); // indices of coins in every column
-    coinPositions[0] = {0, 1, 2, 5, 6, 14, 15, 16, 17, 19};
-    coinPositions[1] = {0, 2, 3, 4, 6, 14, 16, 19};
-    coinPositions[2] = {0, 2, 6, 14, 16, 19};
-    coinPositions[3] = {0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
-    coinPositions[4] = {0, 4, 6, 16, 19};
-    coinPositions[5] = {0, 2, 3, 4, 6, 14, 15, 16, 19};
-    coinPositions[6] = {0, 2, 4, 6, 14, 16, 19};
-    coinPositions[7] = {0, 2, 3, 5, 6, 7, 14, 16, 17, 18, 19};
-    coinPositions[8] = {0, 16};
-    for (int x=0; x<=7; ++x)
-    {
-        for (auto &y : coinPositions[x])
-        {
-            coins.push_back(ECE_Coin(map, x, y));
-            coins.push_back(ECE_Coin(map, 16-x, y));
-        }
-
-    }
-    for (auto &y : coinPositions[8])
-        coins.push_back(ECE_Coin(map, 8, y));
-
-    // powers initialization
-    powers.push_back(ECE_Power(map, 0, 4));
-    powers.push_back(ECE_Power(map, 0, 18));
-    powers.push_back(ECE_Power(map, 16, 4));
-    powers.push_back(ECE_Power(map, 16, 18));
-
 }
 
 void display(void)
@@ -77,20 +37,7 @@ void display(void)
               centerX, centerY, 0.0,
               0.0, 0.0, 1.0);
 
-    // display all the objects
-    ghost_1.display();
-    ghost_2.display();
-    ghost_3.display();
-    ghost_4.display();
-    pacman.display();
-
-    for (auto &coin: coins)
-        coin.display();
-
-    for (auto &power: powers)
-        power.display();
-
-    maze.display();
+    game.display();
 
     glutSwapBuffers();
 }
@@ -113,26 +60,8 @@ void keyboard(unsigned char key, int x, int y)
         angle = (angle + 5) % 360;
         glutPostRedisplay();
     }
-    else if (key == 'w')
-    {
-        pacman.move(UP, 0.1);
-        glutPostRedisplay();
-    }
-    else if (key == 's')
-    {
-        pacman.move(DOWN, 0.1);
-        glutPostRedisplay();
-    }
-    else if (key == 'a')
-    {
-        pacman.move(LEFT, 0.1);
-        glutPostRedisplay();
-    }
-    else if (key == 'd')
-    {
-        pacman.move(RIGHT, 0.1);
-        glutPostRedisplay();
-    }
+
+    game.keyboard(key);
 
 }
 

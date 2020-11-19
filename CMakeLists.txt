@@ -5,4 +5,4 @@ set(CMAKE_CXX_STANDARD 14)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -framework GLUT -framework OpenGL -Wno-deprecated -pthread")
 
-add_executable(Pacman Config.h Utils.h Utils.cpp Map.h Map.cpp Maze.h Maze.cpp Objects.h Objects.cpp main.cpp)
+add_executable(Pacman Config.h Utils.h Utils.cpp Game.h Game.cpp Map.h Map.cpp Maze.h Maze.cpp Objects.h Objects.cpp main.cpp)
