@@ -59,47 +59,59 @@ void ECE_Object::move(Direction direction, float distance)
 
     // the dest position on grid
     int destGridX, destGridY;
+    float destX, destY;
     switch(direction)
     {
         case UP:
             destGridY = static_cast<int>(round(y + distance));
             destGridX = currentGridX;
-            break;
-        case DOWN:
-            destGridY = static_cast<int>(round(y - distance));
-            destGridX = currentGridX;
-            break;
-        case LEFT:
-            destGridX = static_cast<int>(round(x - distance));
-            destGridY = currentGridY;
-            break;
-        case RIGHT:
-        default:
-            destGridX = static_cast<int>(round(x + distance));
-            destGridY = currentGridY;
-            break;
-    }
-
-    float destX, destY;
-    switch(direction)
-    {
-        case UP:
             destX = x;
             destY = y + distance;
             break;
         case DOWN:
+            destGridY = static_cast<int>(round(y - distance));
+            destGridX = currentGridX;
             destX = x;
             destY = y - distance;
             break;
         case LEFT:
+            destGridX = static_cast<int>(round(x - distance));
+            destGridY = currentGridY;
             destY = y;
             destX = x - distance;
             break;
         case RIGHT:
         default:
+            destGridX = static_cast<int>(round(x + distance));
+            destGridY = currentGridY;
             destY = y;
             destX = x + distance;
             break;
+    }
+
+    // handle the special case
+    if (destGridY == 10)
+    {
+        if ((destX < 0.f && destX >= -1.f) ||
+            (destX > static_cast<float>(MAZE_COLS - 1) && destX <= static_cast<float>(MAZE_COLS)))
+        {
+            x = destX;
+            y = destY;
+            return;
+        }
+        if (destX < -1.f)
+        {
+            x = static_cast<float>(MAZE_COLS) - distance;
+            y = destY;
+            return;
+        }
+
+        if (destX > static_cast<float>(MAZE_COLS))
+        {
+            x = -1.f + distance;
+            y = destY;
+            return;
+        }
     }
 
     bool isGridValid = map.validatePosition(destGridX, destGridY);
