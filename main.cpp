@@ -12,11 +12,12 @@ OpenGL execution
 
 // initialize the objects to show
 ECE_Maze maze;
-ECE_Ghost ghost_1(maze, 7, 10, ECE_Color::GREEN);
-ECE_Ghost ghost_2(maze, 8, 10, ECE_Color::PINK);
-ECE_Ghost ghost_3(maze, 9, 10, ECE_Color::ORANGE);
-ECE_Ghost ghost_4(maze, 8, 10, ECE_Color::RED);
-ECE_Pacman pacman(maze, 8, 4);
+ECE_Map map;
+ECE_Ghost ghost_1(map, 7.f, 10.f, ECE_Color::GREEN);
+ECE_Ghost ghost_2(map, 8.f, 10.f, ECE_Color::PINK);
+ECE_Ghost ghost_3(map, 9.f, 10.f, ECE_Color::ORANGE);
+ECE_Ghost ghost_4(map, 8.f, 10.5, ECE_Color::RED);
+ECE_Pacman pacman(map, 8.f, 4.f);
 std::vector<ECE_Coin> coins;
 std::vector<ECE_Power> powers;
 
@@ -47,19 +48,19 @@ void init(void)
     {
         for (auto &y : coinPositions[x])
         {
-            coins.push_back(ECE_Coin(maze, x, y));
-            coins.push_back(ECE_Coin(maze, 16-x, y));
+            coins.push_back(ECE_Coin(map, x, y));
+            coins.push_back(ECE_Coin(map, 16-x, y));
         }
 
     }
     for (auto &y : coinPositions[8])
-        coins.push_back(ECE_Coin(maze, 8, y));
+        coins.push_back(ECE_Coin(map, 8, y));
 
     // powers initialization
-    powers.push_back(ECE_Power(maze, 0, 4));
-    powers.push_back(ECE_Power(maze, 0, 18));
-    powers.push_back(ECE_Power(maze, 16, 4));
-    powers.push_back(ECE_Power(maze, 16, 18));
+    powers.push_back(ECE_Power(map, 0, 4));
+    powers.push_back(ECE_Power(map, 0, 18));
+    powers.push_back(ECE_Power(map, 16, 4));
+    powers.push_back(ECE_Power(map, 16, 18));
 
 }
 
@@ -80,7 +81,7 @@ void display(void)
     ghost_1.display();
     ghost_2.display();
     ghost_3.display();
-    ghost_4.display(8, 10.5);
+    ghost_4.display();
     pacman.display();
 
     for (auto &coin: coins)
@@ -114,26 +115,22 @@ void keyboard(unsigned char key, int x, int y)
     }
     else if (key == 'w')
     {
-        int step = 1;
-        pacman.move(UP, step);
+        pacman.move(UP, 0.1);
         glutPostRedisplay();
     }
     else if (key == 's')
     {
-        int step = 1;
-        pacman.move(DOWN, step);
+        pacman.move(DOWN, 0.1);
         glutPostRedisplay();
     }
     else if (key == 'a')
     {
-        int step = 1;
-        pacman.move(LEFT, step);
+        pacman.move(LEFT, 0.1);
         glutPostRedisplay();
     }
     else if (key == 'd')
     {
-        int step = 1;
-        pacman.move(RIGHT, step);
+        pacman.move(RIGHT, 0.1);
         glutPostRedisplay();
     }
 

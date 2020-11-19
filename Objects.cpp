@@ -6,17 +6,17 @@ Description:
 Class definitions
 */
 
+#include <cmath>
 #include "Objects.h"
 #include "Utils.h"
-#include <iostream>
 
 //////////////////////////////////////////////////
 /// ECE_Object
 //////////////////////////////////////////////////
 
-ECE_Object::ECE_Object(ECE_Maze &maze) : maze(maze), x(0), y(0), color(ECE_Color::WHITE) {}
-ECE_Object::ECE_Object(ECE_Maze &maze, int x, int y, ECE_Color color)
-    : maze(maze), x(x), y(y), color(color) {}
+ECE_Object::ECE_Object(ECE_Map &map) : map(map), x(0.f), y(0.f), color(ECE_Color::WHITE) {}
+ECE_Object::ECE_Object(ECE_Map &map, float x, float y, ECE_Color color)
+    : map(map), x(x), y(y), color(color) {}
 ECE_Object::~ECE_Object(){}
 
 std::array<float, 2> ECE_Object::getCoordinate() const
@@ -24,19 +24,19 @@ std::array<float, 2> ECE_Object::getCoordinate() const
     return positionToCoordinate(x, y);
 }
 
-void ECE_Object::setPosition(int x, int y)
+void ECE_Object::setPosition(float x, float y)
 {
     if (x < 0)
-        this->x = 0;
+        this->x = 0.f;
     else if (x >= MAZE_COLS)
-        this->x = MAZE_COLS - 1;
+        this->x = static_cast<float>(MAZE_COLS - 1);
     else
         this->x = x;
 
     if (y < 0)
-        this->y = 0;
+        this->y = 0.f;
     else if (y >= MAZE_ROWS)
-        this->y = MAZE_ROWS - 1;
+        this->y = static_cast<float>(MAZE_ROWS - 1);
     else
         this->y = y;
 }
@@ -46,62 +46,82 @@ void ECE_Object::setColor(ECE_Color color)
     this->color = color;
 }
 
-void ECE_Object::move(Direction direction, int &steps)
+void ECE_Object::move(Direction direction, float distance)
 {
-    bool isValid;
-    int actualStep = 0;
-    int lastX, lastY, newX, newY;
+    // the current position on grid
+    int currentGridX = static_cast<int>(roundf(x));
+    int currentGridY = static_cast<int>(roundf(y));
 
-    lastX = x;
-    lastY = y;
-
-    for (int i=0; i<=steps; ++i)
+    // the dest position on grid
+    int destGridX, destGridY;
+    switch(direction)
     {
-        actualStep = i;
-        switch(direction)
-        {
-            case LEFT:
-                newX = x - i;
-                newY = y;
-                break;
-            case RIGHT:
-                newX = x + i;
-                newY = y;
-                break;
-            case UP:
-                newX = x;
-                newY = y + i;
-                break;
-            case DOWN:
-            default:
-                newX = x;
-                newY = y - i;
-                break;
-        }
-        isValid = maze.validatePosition(newX, newY);
-
-        std::cout << "isValid: " << isValid << std::endl;
-
-        if (!isValid)
+        case UP:
+            destGridY = static_cast<int>(round(y + distance));
+            destGridX = currentGridX;
             break;
-
-        lastX = newX; lastY = newY;
+        case DOWN:
+            destGridY = static_cast<int>(round(y - distance));
+            destGridX = currentGridX;
+            break;
+        case LEFT:
+            destGridX = static_cast<int>(round(x - distance));
+            destGridY = currentGridY;
+            break;
+        case RIGHT:
+        default:
+            destGridX = static_cast<int>(round(x + distance));
+            destGridY = currentGridY;
+            break;
     }
 
-    x = lastX;
-    y = lastY;
+    float destX, destY;
+    switch(direction)
+    {
+        case UP:
+            destX = x;
+            destY = y + distance;
+            break;
+        case DOWN:
+            destX = x;
+            destY = y - distance;
+            break;
+        case LEFT:
+            destY = y;
+            destX = x - distance;
+            break;
+        case RIGHT:
+        default:
+            destY = y;
+            destX = x + distance;
+            break;
+    }
 
-    std::cout << "x: " << x << ", y: " << y << std::endl;
+    bool isGridValid = map.validatePosition(destGridX, destGridY);
+    bool isPosValid = map.validatePosition(destX, destY);
 
-    steps = actualStep;
+    if (isPosValid)
+    {
+        x = destX;
+        y = destY;
+        return;
+    }
+
+    // position is not valid but the grid is valid
+    if (isGridValid)
+    {
+        x = static_cast<float>(destGridX);
+        y = static_cast<float>(destGridY);
+        return;
+    }
 }
 
 //////////////////////////////////////////////////
 /// ECE_Ghost
 //////////////////////////////////////////////////
 
-ECE_Ghost::ECE_Ghost(ECE_Maze &maze):ECE_Object(maze){}
-ECE_Ghost::ECE_Ghost(ECE_Maze &maze, int x, int y, ECE_Color color):ECE_Object(maze, x, y, color){}
+ECE_Ghost::ECE_Ghost(ECE_Map &map):ECE_Object(map){}
+ECE_Ghost::ECE_Ghost(ECE_Map &map, float x, float y, ECE_Color color):ECE_Object(map, x, y, color){}
 ECE_Ghost::~ECE_Ghost(){}
 
 void ECE_Ghost::display()
@@ -140,8 +160,8 @@ void ECE_Ghost::display(float cX, float cY)
 /// ECE_Pacman
 //////////////////////////////////////////////////
 
-ECE_Pacman::ECE_Pacman(ECE_Maze &maze):ECE_Object(maze, 0, 0, ECE_Color::YELLOW){}
-ECE_Pacman::ECE_Pacman(ECE_Maze &maze, int x, int y):ECE_Object(maze, x, y, ECE_Color::YELLOW){}
+ECE_Pacman::ECE_Pacman(ECE_Map &map):ECE_Object(map, 0, 0, ECE_Color::YELLOW){}
+ECE_Pacman::ECE_Pacman(ECE_Map &map, float x, float y):ECE_Object(map, x, y, ECE_Color::YELLOW){}
 ECE_Pacman::~ECE_Pacman(){}
 
 void ECE_Pacman::display()
@@ -172,8 +192,8 @@ void ECE_Pacman::display()
 /// ECE_Coin
 //////////////////////////////////////////////////
 
-ECE_Coin::ECE_Coin(ECE_Maze &maze):ECE_Object(maze, 0, 0, ECE_Color::SILVER){}
-ECE_Coin::ECE_Coin(ECE_Maze &maze, int x, int y):ECE_Object(maze, x, y, ECE_Color::SILVER){}
+ECE_Coin::ECE_Coin(ECE_Map &map):ECE_Object(map, 0, 0, ECE_Color::SILVER){}
+ECE_Coin::ECE_Coin(ECE_Map &map, float x, float y):ECE_Object(map, x, y, ECE_Color::SILVER){}
 ECE_Coin::~ECE_Coin(){}
 
 void ECE_Coin::display()
@@ -202,13 +222,12 @@ void ECE_Coin::display()
 /// ECE_Power
 //////////////////////////////////////////////////
 
-ECE_Power::ECE_Power(ECE_Maze &maze):ECE_Object(maze, 0, 0, ECE_Color::GOLDEN){}
-ECE_Power::ECE_Power(ECE_Maze &maze, int x, int y):ECE_Object(maze, x, y, ECE_Color::GOLDEN){}
+ECE_Power::ECE_Power(ECE_Map &map):ECE_Object(map, 0, 0, ECE_Color::GOLDEN){}
+ECE_Power::ECE_Power(ECE_Map &map, float x, float y):ECE_Object(map, x, y, ECE_Color::GOLDEN){}
 ECE_Power::~ECE_Power(){}
 
 void ECE_Power::display()
 {
-
     // get coordinate
     auto coordinate = getCoordinate();
     float cX = coordinate[0];

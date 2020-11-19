@@ -7,4 +7,4 @@
 #include "Config.h"
 
 std::array<float, 3> colorToRGBf(ECE_Color color);
-std::array<float, 2> positionToCoordinate(int x, int y);
+std::array<float, 2> positionToCoordinate(float x, float y);

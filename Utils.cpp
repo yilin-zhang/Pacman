@@ -32,10 +32,10 @@ std::array<float, 3> colorToRGBf(ECE_Color color)
     }
 }
 
-std::array<float, 2> positionToCoordinate(int x, int y)
+std::array<float, 2> positionToCoordinate(float x, float y)
 {
     float halfGridSize = GRID_SIZE / 2.f;
-    float cX = static_cast<float>(x) * GRID_SIZE;
-    float cY = static_cast<float>(y) * GRID_SIZE;
+    float cX = x * GRID_SIZE;
+    float cY = y * GRID_SIZE;
     return {cX, cY};
 }

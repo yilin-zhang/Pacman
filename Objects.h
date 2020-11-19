@@ -8,39 +8,34 @@ Class declarations and constant definitions
 
 #pragma once
 
-
 #include <array>
 #include <vector>
 #include "Config.h"
-#include "Maze.h"
+#include "Map.h"
 
 class ECE_Object
 {
 public:
-
-    ECE_Object(ECE_Maze &maze, int x, int y, ECE_Color color);
-    ECE_Object(ECE_Maze &maze);
+    ECE_Object(ECE_Map &map, float x, float y, ECE_Color color);
+    ECE_Object(ECE_Map &map);
     ~ECE_Object();
 
     /** Set the current position
      * @param x
      * @param y
      */
-    void setPosition(int x, int y);
+    void setPosition(float x, float y);
 
     /** Set the color of the object
      * @param color
      */
     void setColor(ECE_Color color);
 
-    void move(Direction direction, int &steps);
-
-    /** Check the validity of the given position
-     * @param x
-     * @param y
-     * @return true if the position is valid
+    /** Move the object (only works when distance < 1)
+     * @param direction
+     * @param distance
      */
-    bool validatePosition(int x, int y);
+    void move(Direction direction, float distance);
 
     /** Implement this function to display on screen
      */
@@ -52,15 +47,15 @@ protected:
      */
     std::array<float, 2> getCoordinate() const;
 
-    int x, y;  // the logical position on the map
+    float x, y;  // the logical position on the map
     ECE_Color color;  // the color of the object
-    ECE_Maze& maze;
+    ECE_Map& map;
 };
 
 class ECE_Ghost : public ECE_Object{
 public:
-    ECE_Ghost(ECE_Maze &maze, int x, int y, ECE_Color color);
-    ECE_Ghost(ECE_Maze &maze);
+    ECE_Ghost(ECE_Map &map, float x, float y, ECE_Color color);
+    ECE_Ghost(ECE_Map &map);
     ~ECE_Ghost();
     void display() override;
 
@@ -74,8 +69,8 @@ public:
 class ECE_Pacman : public ECE_Object
 {
 public:
-    ECE_Pacman(ECE_Maze &maze, int x, int y);
-    ECE_Pacman(ECE_Maze &maze);
+    ECE_Pacman(ECE_Map &map, float x, float y);
+    ECE_Pacman(ECE_Map &map);
     ~ECE_Pacman();
     void display() override;
 };
@@ -83,8 +78,8 @@ public:
 class ECE_Coin : public ECE_Object
 {
 public:
-    ECE_Coin(ECE_Maze &maze, int x, int y);
-    ECE_Coin(ECE_Maze &maze);
+    ECE_Coin(ECE_Map &map, float x, float y);
+    ECE_Coin(ECE_Map &map);
     ~ECE_Coin();
     void display() override;
 };
@@ -92,8 +87,8 @@ public:
 class ECE_Power : public ECE_Object
 {
 public:
-    ECE_Power(ECE_Maze &maze, int x, int y);
-    ECE_Power(ECE_Maze &maze);
+    ECE_Power(ECE_Map &map, float x, float y);
+    ECE_Power(ECE_Map &map);
     ~ECE_Power();
     void display() override;
 };

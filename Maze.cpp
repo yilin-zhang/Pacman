@@ -10,7 +10,6 @@
 ECE_Maze::ECE_Maze()
 {
     initializeWall();
-    initializeObjects();
 }
 
 ECE_Maze::~ECE_Maze(){}
@@ -153,59 +152,9 @@ void ECE_Maze::displayHalfBrick(int x, int y, BrickRotation rotation)
 
 }
 
-bool ECE_Maze::validatePosition(int x, int y)
-{
-    if (x < 0 || x >= MAZE_COLS || y < 0 || y >= MAZE_ROWS)
-        return false;
-
-    // Note that the order of x and y is revered
-    return !(initialMap[y][x] == NoPath);
-}
-
-void ECE_Maze::initializeObjects()
-{
-    // initialize map file
-    std::fstream mapFile;
-    mapFile.open(MAP_PATH);
-
-    // parse the map file
-    std::string line;
-
-    for (int i=MAZE_ROWS-1; i>=0; --i)
-    {
-        mapFile >> line;
-        for (int j=0; j<MAZE_COLS; ++j)
-        {
-            ObjectType type;
-            switch(line[j])
-            {
-                case '*':
-                    type = Coin;
-                    break;
-                case 'o':
-                    type = Power;
-                    break;
-                case 'O':
-                    type = Path;
-                    break;
-                case '@':
-                    type = Pacman;
-                    break;
-                case 'G':
-                    type = Ghost;
-                    break;
-                case '#':
-                default:
-                    type = NoPath;
-            }
-            initialMap[i][j] = type;
-        }
-    }
-}
-
 void ECE_Maze::initializeWall()
 {
-    // initialize the wall
+    // initialize the wall (this is a bad idea, but it works, at least for now)
     wall.push_back(Brick{-1, -1,  BrickType::L, BrickRotation::Up});
     wall.push_back(Brick{-1,  0,  BrickType::I, BrickRotation::Up});
     wall.push_back(Brick{-1,  1,  BrickType::I, BrickRotation::Up});
