@@ -27,6 +27,13 @@ const float GRID_SIZE = 1.0;
 // TODO: optimize this
 const std::string MAP_PATH = "/Users/yilin/Desktop/pacman/map.txt";
 
+// NOTE: the frame rate is related to the behavior of object moving and timing
+// If the frame rate is too low, the object has to move more than one unit per step, which is not allowed
+// in the `move` function for now
+// But if the frame rate is too high, the software can't keep the time accurate (it will be slower than the actual time)
+const float FRAME_RATE = 60; // FPS
+const unsigned int FRAME_TIME = static_cast<unsigned int>(1.f/FRAME_RATE*1000.f); // ms
+
 enum ECE_Color
 {
     BLACK,

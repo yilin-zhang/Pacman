@@ -74,6 +74,15 @@ public:
     ECE_Pacman(ECE_Map &map, float x, float y);
     ~ECE_Pacman();
     void display() override;
+
+    void setMoving(bool isMoving);
+    bool checkMoving();
+    void setDirection(Direction direction);
+    void updateState();
+private:
+    float speed;
+    bool isMoving;
+    Direction movingDirection;
 };
 
 class ECE_Coin : public ECE_Object

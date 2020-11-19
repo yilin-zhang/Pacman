@@ -10,13 +10,14 @@ Game::Game():
 pacman(map, 8.f, 4.f),
 ghosts(),
 coins(),
-powers()
+powers(),
+isPoweredUp(false)
 {
     // initialize the ghosts
-    ghosts[0] = new ECE_Ghost(map, 7.f, 10.f, ECE_Color::GREEN);
-    ghosts[1] = new ECE_Ghost(map, 8.f, 10.f, ECE_Color::PINK);
-    ghosts[2] = new ECE_Ghost(map, 9.f, 10.f, ECE_Color::ORANGE);
-    ghosts[3] = new ECE_Ghost(map, 8.f, 12.f, ECE_Color::RED);
+    ghosts[0] = new ECE_Ghost(map, 7.f, 10.f, ghostColors[0]);
+    ghosts[1] = new ECE_Ghost(map, 8.f, 10.f, ghostColors[1]);
+    ghosts[2] = new ECE_Ghost(map, 9.f, 10.f, ghostColors[2]);
+    ghosts[3] = new ECE_Ghost(map, 8.f, 12.f, ghostColors[3]);
 
     // TODO: Ugly code, initialize these using the information in map
     // coins initialization
@@ -66,6 +67,22 @@ Game::~Game()
         delete power;
 }
 
+void Game::updateState()
+{
+    // update the states
+    pacman.updateState();
+    check();
+
+    // check if powered up
+    if (isPoweredUp)
+    {
+        powerUpTimer.update();
+        // if the time is up, turn the power-up off
+        if (powerUpTimer.check())
+            setPowerUp(false);
+    }
+}
+
 void Game::display()
 {
     maze.display();
@@ -95,24 +112,24 @@ void Game::keyboard(unsigned char key)
     if (!(key == 'w' || key == 's' || key == 'a' || key == 'd'))
         return;
 
+    if (!pacman.checkMoving())
+        pacman.setMoving(true);
+
     switch(key)
     {
         case 'w':
-            pacman.move(UP, 0.2);
+            pacman.setDirection(UP);
             break;
         case 's':
-            pacman.move(DOWN, 0.2);
+            pacman.setDirection(DOWN);
             break;
         case 'a':
-            pacman.move(LEFT, 0.2);
+            pacman.setDirection(LEFT);
             break;
         case 'd':
-            pacman.move(RIGHT, 0.2);
+            pacman.setDirection(RIGHT);
             break;
     }
-
-    check();
-    glutPostRedisplay();
 }
 
 void Game::check()
@@ -144,13 +161,13 @@ void Game::check()
         {
             power->getPosition(x, y);
 
-            if (sqrt(pow(pacmanX - x, 2) + pow(pacmanY - y, 2)) < DISTANCE_THRESHOLD)
+            if (sqrt(pow(pacmanX - x, 2) +
+                     pow(pacmanY - y, 2)) < DISTANCE_THRESHOLD)
             {
                 // remove the powerup
                 delete power;
                 power = nullptr;
 
-                // TODO: should add a timer to set it false after 5 seconds
                 setPowerUp(true);
             }
         }
@@ -161,9 +178,17 @@ void Game::setPowerUp(bool isPowerUp)
 {
     if (isPowerUp)
     {
+        powerUpTimer.start(5000);
         for (auto & ghost : ghosts)
             ghost->setColor(ECE_Color::WHITE);
 
         isPoweredUp = true;
+    }
+    else
+    {
+        // reset the color
+        for (int i=0; i<4; ++i)
+            ghosts[i]->setColor(ghostColors[i]);
+        isPoweredUp = false;
     }
 }

@@ -58,11 +58,16 @@ void keyboard(unsigned char key, int x, int y)
     if (key == 'r' || key == 'R')
     {
         angle = (angle + 5) % 360;
-        glutPostRedisplay();
     }
 
     game.keyboard(key);
+}
 
+void frameUpdateTimer(int value)
+{
+    game.updateState();
+    display();
+    glutTimerFunc(FRAME_TIME, frameUpdateTimer, 0);
 }
 
 int main(int argc, char** argv)
@@ -77,6 +82,7 @@ int main(int argc, char** argv)
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
     glutKeyboardFunc(keyboard);
+    glutTimerFunc(FRAME_TIME, frameUpdateTimer, 0);
 
     glEnable(GL_LIGHTING);
     glEnable(GL_COLOR_MATERIAL);

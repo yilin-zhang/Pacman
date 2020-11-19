@@ -6,6 +6,7 @@
 #include "Map.h"
 #include "Maze.h"
 #include "Objects.h"
+#include "Utils.h"
 #include <array>
 
 class Game
@@ -13,6 +14,8 @@ class Game
 public:
     Game();
     ~Game();
+
+    void updateState();
 
     void display();
 
@@ -28,7 +31,9 @@ private:
     std::array<ECE_Ghost*, 4> ghosts;
     std::array<ECE_Coin*, 152> coins;
     std::array<ECE_Power*, 4> powers;
+    const std::array<ECE_Color, 4> ghostColors = {ECE_Color::GREEN, ECE_Color::PINK, ECE_Color::ORANGE, ECE_Color::RED};
 
     bool isPoweredUp;
+    Timer powerUpTimer;
 };
 

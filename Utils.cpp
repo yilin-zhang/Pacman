@@ -3,6 +3,7 @@
 //
 
 #include "Utils.h"
+#include <iostream>
 
 void colorToRGBf(ECE_Color color, float &red, float &green, float &blue)
 {
@@ -66,4 +67,38 @@ void positionToCoordinate(float x, float y, float &cX, float &cY)
     float halfGridSize = GRID_SIZE / 2.f;
     cX = x * GRID_SIZE;
     cY = y * GRID_SIZE;
+}
+
+
+//////////////////////////////////////////////////
+/// Timer
+//////////////////////////////////////////////////
+
+Timer::Timer():isCounting(false), finished(false), counter(0), maxVal(0) {}
+Timer::~Timer()= default;
+
+void Timer::start(float ms)
+{
+    maxVal = static_cast<long>(ms / static_cast<float>(FRAME_TIME));
+    counter = 0;
+    isCounting = true;
+    finished = false;
+    std::cout << "maxVal: " << maxVal << std::endl;
+}
+
+void Timer::update()
+{
+    if (!isCounting)
+        return;
+
+    if (++counter >= maxVal)
+    {
+        isCounting = false;
+        finished = true;
+    }
+}
+
+bool Timer::check()
+{
+    return finished;
 }

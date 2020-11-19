@@ -161,7 +161,8 @@ void ECE_Ghost::display(float cX, float cY)
 //////////////////////////////////////////////////
 
 ECE_Pacman::ECE_Pacman(ECE_Map &map, float x, float y):
-ECE_Object(map, x, y, ECE_Color::YELLOW){}
+ECE_Object(map, x, y, ECE_Color::YELLOW),
+speed(0.02f * static_cast<float>(FRAME_TIME)), isMoving(false), movingDirection(LEFT){}
 ECE_Pacman::~ECE_Pacman()= default;
 
 void ECE_Pacman::display()
@@ -184,6 +185,29 @@ void ECE_Pacman::display()
     glutSolidSphere(0.5, 10, 8);
 
     glPopMatrix();
+}
+
+void ECE_Pacman::setMoving(bool isMoving)
+{
+    this->isMoving = isMoving;
+}
+
+bool ECE_Pacman::checkMoving()
+{
+    return isMoving;
+}
+
+void ECE_Pacman::setDirection(Direction direction)
+{
+    movingDirection = direction;
+}
+
+void ECE_Pacman::updateState()
+{
+    if (isMoving)
+    {
+        move(movingDirection, speed);
+    }
 }
 
 //////////////////////////////////////////////////
