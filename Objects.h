@@ -55,34 +55,41 @@ protected:
     ECE_Map& map;
 };
 
-class ECE_Ghost : public ECE_Object{
-public:
-    ECE_Ghost(ECE_Map &map, float x, float y, ECE_Color color);
-    ~ECE_Ghost();
-    void display() override;
-
-    /** An additional function to specify the coordinate to display
-     * @param cX
-     * @param cY
-     */
-    void display(float cX, float cY);
-};
-
-class ECE_Pacman : public ECE_Object
+class ECE_Character : public ECE_Object
 {
 public:
-    ECE_Pacman(ECE_Map &map, float x, float y);
-    ~ECE_Pacman();
-    void display() override;
+    ECE_Character(ECE_Map &map, float x, float y, ECE_Color color);
+    ~ECE_Character();
 
     void setMoving(bool isMoving);
     bool checkMoving();
     void setDirection(Direction direction);
     void updateState();
-private:
+
+protected:
     float speed;
     bool isMoving;
     Direction movingDirection;
+};
+
+class ECE_Ghost : public ECE_Character{
+public:
+    ECE_Ghost(ECE_Map &map, float x, float y, ECE_Color color);
+    ~ECE_Ghost();
+    void display() override;
+};
+
+class ECE_Pacman : public ECE_Character
+{
+public:
+    ECE_Pacman(ECE_Map &map, float x, float y);
+    ~ECE_Pacman();
+
+    /** An additional function to specify the coordinate to display
+     * @param cX
+     * @param cY
+     */
+    void display() override;
 };
 
 class ECE_Coin : public ECE_Object

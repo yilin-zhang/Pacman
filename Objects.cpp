@@ -134,10 +134,41 @@ void ECE_Object::move(Direction direction, float distance)
 }
 
 //////////////////////////////////////////////////
+/// ECE_Character
+//////////////////////////////////////////////////
+
+ECE_Character::ECE_Character(ECE_Map &map, float x, float y, ECE_Color color):
+ECE_Object(map, x, y, color),
+speed(0.012f * static_cast<float>(FRAME_TIME)), isMoving(false), movingDirection(LEFT){}
+ECE_Character::~ECE_Character()= default;
+
+void ECE_Character::setMoving(bool isMoving)
+{
+    this->isMoving = isMoving;
+}
+
+bool ECE_Character::checkMoving()
+{
+    return isMoving;
+}
+
+void ECE_Character::setDirection(Direction direction)
+{
+    movingDirection = direction;
+}
+
+void ECE_Character::updateState()
+{
+    if (isMoving)
+    {
+        move(movingDirection, speed);
+    }
+}
+//////////////////////////////////////////////////
 /// ECE_Ghost
 //////////////////////////////////////////////////
 
-ECE_Ghost::ECE_Ghost(ECE_Map &map, float x, float y, ECE_Color color):ECE_Object(map, x, y, color){}
+ECE_Ghost::ECE_Ghost(ECE_Map &map, float x, float y, ECE_Color color):ECE_Character(map, x, y, color){}
 ECE_Ghost::~ECE_Ghost()= default;
 
 void ECE_Ghost::display()
@@ -145,11 +176,7 @@ void ECE_Ghost::display()
     // get coordinate
     float cX, cY;
     getCoordinate(cX, cY);
-    display(cX, cY);
-}
 
-void ECE_Ghost::display(float cX, float cY)
-{
     // get color
     float colorR, colorG, colorB;
     colorToRGBf(color, colorR, colorG, colorB);
@@ -173,8 +200,7 @@ void ECE_Ghost::display(float cX, float cY)
 //////////////////////////////////////////////////
 
 ECE_Pacman::ECE_Pacman(ECE_Map &map, float x, float y):
-ECE_Object(map, x, y, ECE_Color::YELLOW),
-speed(0.012f * static_cast<float>(FRAME_TIME)), isMoving(false), movingDirection(LEFT){}
+ECE_Character(map, x, y, ECE_Color::YELLOW){}
 ECE_Pacman::~ECE_Pacman()= default;
 
 void ECE_Pacman::display()
@@ -197,29 +223,6 @@ void ECE_Pacman::display()
     glutSolidSphere(0.5, 10, 8);
 
     glPopMatrix();
-}
-
-void ECE_Pacman::setMoving(bool isMoving)
-{
-    this->isMoving = isMoving;
-}
-
-bool ECE_Pacman::checkMoving()
-{
-    return isMoving;
-}
-
-void ECE_Pacman::setDirection(Direction direction)
-{
-    movingDirection = direction;
-}
-
-void ECE_Pacman::updateState()
-{
-    if (isMoving)
-    {
-        move(movingDirection, speed);
-    }
 }
 
 //////////////////////////////////////////////////

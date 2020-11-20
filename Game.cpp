@@ -72,14 +72,15 @@ void Game::updateState()
 {
     // update the states
     pacman.updateState();
+    for (auto & ghost : ghosts)
+        if (ghost)
+            ghost->updateState();
+
     check();
 
     // TODO: this is just a place holder
     if (isWin)
-    {
         pacman.setColor(ECE_Color::GREEN);
-        std::cout << "win!" << std::endl;
-    }
 
     // check if powered up
     if (isPoweredUp)
@@ -97,22 +98,16 @@ void Game::display()
     pacman.display();
 
     for (auto & ghost : ghosts)
-    {
         if (ghost)
             ghost -> display();
-    }
 
     for (auto & coin : coins)
-    {
         if (coin)
             coin -> display();
-    }
 
     for (auto & power : powers)
-    {
         if (power)
             power -> display();
-    }
 }
 
 void Game::keyboard(unsigned char key)
@@ -202,16 +197,12 @@ void Game::checkPowers()
 void Game::checkClear()
 {
     for (auto &coin : coins)
-    {
         if (coin)
             return;
-    }
 
     for (auto &power : powers)
-    {
         if (power)
             return;
-    }
 
     isWin = true;
 }
