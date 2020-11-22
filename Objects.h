@@ -32,12 +32,6 @@ public:
      */
     void setColor(ECE_Color color);
 
-    /** Move the object (only works when distance < 1)
-     * @param direction
-     * @param distance
-     */
-    void move(Direction direction, float distance);
-
     /** Implement this function to display on screen
      */
     virtual void display() = 0;
@@ -61,10 +55,36 @@ public:
     ECE_Character(ECE_Map &map, float x, float y, ECE_Color color);
     ~ECE_Character();
 
+    /** Move the object (only works when distance < 1)
+     * @param direction
+     * @param distance
+     */
+    void move(Direction direction, float distance);
+
+    /** Set the moving status of the character
+     * @param isMoving
+     */
     void setMoving(bool isMoving);
+
+    /** Check if the status is moving
+     * @return
+     */
     bool checkMoving();
+
+    /** Set the moving direction
+     * @param direction
+     */
     void setDirection(Direction direction);
-    void updateState();
+
+    /** Get the current direction
+     * @return the current direction
+     */
+    Direction getDirection();
+
+    /** Update the position
+     * @return true if the character has moved
+     */
+    void updatePosition();
 
 protected:
     float speed;

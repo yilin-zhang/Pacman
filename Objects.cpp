@@ -51,7 +51,17 @@ void ECE_Object::setColor(ECE_Color color)
     this->color = color;
 }
 
-void ECE_Object::move(Direction direction, float distance)
+
+//////////////////////////////////////////////////
+/// ECE_Character
+//////////////////////////////////////////////////
+
+ECE_Character::ECE_Character(ECE_Map &map, float x, float y, ECE_Color color):
+ECE_Object(map, x, y, color),
+speed(0.012f * static_cast<float>(FRAME_TIME)), isMoving(false), movingDirection(LEFT){}
+ECE_Character::~ECE_Character()= default;
+
+void ECE_Character::move(Direction direction, float distance)
 {
     // the current position on grid
     int currentGridX = static_cast<int>(roundf(x));
@@ -125,6 +135,7 @@ void ECE_Object::move(Direction direction, float distance)
     }
 
     // position is not valid but the grid is valid
+    // it means the character is stuck
     if (isGridValid)
     {
         x = static_cast<float>(destGridX);
@@ -132,15 +143,6 @@ void ECE_Object::move(Direction direction, float distance)
         return;
     }
 }
-
-//////////////////////////////////////////////////
-/// ECE_Character
-//////////////////////////////////////////////////
-
-ECE_Character::ECE_Character(ECE_Map &map, float x, float y, ECE_Color color):
-ECE_Object(map, x, y, color),
-speed(0.012f * static_cast<float>(FRAME_TIME)), isMoving(false), movingDirection(LEFT){}
-ECE_Character::~ECE_Character()= default;
 
 void ECE_Character::setMoving(bool isMoving)
 {
@@ -157,18 +159,25 @@ void ECE_Character::setDirection(Direction direction)
     movingDirection = direction;
 }
 
-void ECE_Character::updateState()
+Direction ECE_Character::getDirection()
+{
+    return movingDirection;
+}
+
+void ECE_Character::updatePosition()
 {
     if (isMoving)
-    {
         move(movingDirection, speed);
-    }
 }
 //////////////////////////////////////////////////
 /// ECE_Ghost
 //////////////////////////////////////////////////
 
-ECE_Ghost::ECE_Ghost(ECE_Map &map, float x, float y, ECE_Color color):ECE_Character(map, x, y, color){}
+ECE_Ghost::ECE_Ghost(ECE_Map &map, float x, float y, ECE_Color color):ECE_Character(map, x, y, color)
+{
+    // override the speed variable
+    speed = 0.005f * static_cast<float>(FRAME_TIME);
+}
 ECE_Ghost::~ECE_Ghost()= default;
 
 void ECE_Ghost::display()

@@ -12,8 +12,119 @@ ghosts(),
 coins(),
 powers(),
 isPoweredUp(false),
-isWin(false)
+isWin(false),
+isDead(false),
+isLost(false),
+numDeaths(0)
 {
+    initializeObjects();
+}
+
+Game::~Game()
+{
+    releaseResources();
+}
+
+void Game::updateState()
+{
+    // update the states
+    pacman.updatePosition();
+    for (auto & ghost : ghosts)
+        if (ghost)
+            ghost->updatePosition();
+
+    check();
+
+    // TODO: this is just a place holder
+    if (isWin)
+        pacman.setColor(ECE_Color::GREEN);
+
+    if (isLost)
+    {
+        reset();
+        std::cout << "you lose!" << std::endl;
+        return;
+    }
+
+    if (isDead)
+    {
+        resetForDeath();
+        std::cout << "you dead!" << std::endl;
+        return;
+    }
+
+
+    // check if powered up
+    if (isPoweredUp)
+    {
+        powerUpTimer.update();
+        // if the time is up, turn the power-up off
+        if (powerUpTimer.check())
+            setPowerUp(false);
+    }
+}
+
+void Game::display()
+{
+    maze.display();
+    pacman.display();
+
+    for (auto & ghost : ghosts)
+        if (ghost)
+            ghost -> display();
+
+    for (auto & coin : coins)
+        if (coin)
+            coin -> display();
+
+    for (auto & power : powers)
+        if (power)
+            power -> display();
+}
+
+void Game::keyboard(unsigned char key)
+{
+    if (!(key == 'w' || key == 's' || key == 'a' || key == 'd'))
+        return;
+
+    if (!pacman.checkMoving())
+        pacman.setMoving(true);
+
+    for (auto & ghost : ghosts)
+        if (ghost && !ghost->checkMoving())
+            ghost->setMoving(true);
+
+    switch(key)
+    {
+        case 'w':
+            pacman.setDirection(UP);
+            break;
+        case 's':
+            pacman.setDirection(DOWN);
+            break;
+        case 'a':
+            pacman.setDirection(LEFT);
+            break;
+        case 'd':
+            pacman.setDirection(RIGHT);
+            break;
+    }
+}
+
+void Game::reset()
+{
+    releaseResources();
+    initializeObjects();
+    pacman.setMoving(false);
+    isPoweredUp = false;
+    isDead = false;
+    numDeaths = 0;
+}
+
+void Game::initializeObjects()
+{
+    pacman.setPosition(8.f, 4.f);
+
     // initialize the ghosts
     ghosts[0] = new ECE_Ghost(map, 7.f, 10.f, ghostColors[0]);
     ghosts[1] = new ECE_Ghost(map, 8.f, 10.f, ghostColors[1]);
@@ -56,7 +167,7 @@ isWin(false)
     powers[3] = new ECE_Power(map, 16.f, 18.f);
 }
 
-Game::~Game()
+void Game::releaseResources()
 {
     for (auto & ghost : ghosts)
         delete ghost;
@@ -68,82 +179,129 @@ Game::~Game()
         delete power;
 }
 
-void Game::updateState()
-{
-    // update the states
-    pacman.updateState();
-    for (auto & ghost : ghosts)
-        if (ghost)
-            ghost->updateState();
-
-    check();
-
-    // TODO: this is just a place holder
-    if (isWin)
-        pacman.setColor(ECE_Color::GREEN);
-
-    // check if powered up
-    if (isPoweredUp)
-    {
-        powerUpTimer.update();
-        // if the time is up, turn the power-up off
-        if (powerUpTimer.check())
-            setPowerUp(false);
-    }
-}
-
-void Game::display()
-{
-    maze.display();
-    pacman.display();
-
-    for (auto & ghost : ghosts)
-        if (ghost)
-            ghost -> display();
-
-    for (auto & coin : coins)
-        if (coin)
-            coin -> display();
-
-    for (auto & power : powers)
-        if (power)
-            power -> display();
-}
-
-void Game::keyboard(unsigned char key)
-{
-    if (!(key == 'w' || key == 's' || key == 'a' || key == 'd'))
-        return;
-
-    if (!pacman.checkMoving())
-        pacman.setMoving(true);
-
-    switch(key)
-    {
-        case 'w':
-            pacman.setDirection(UP);
-            break;
-        case 's':
-            pacman.setDirection(DOWN);
-            break;
-        case 'a':
-            pacman.setDirection(LEFT);
-            break;
-        case 'd':
-            pacman.setDirection(RIGHT);
-            break;
-    }
-}
-
 void Game::check()
 {
-    // 1. check if the pacman is close to a coin or a power
+    // 1. check if the ghosts need to change their directions
+    checkGhosts();
+
+    // 2. check if the pacman is close to a coin or a power
     // remove the coin if they are close
     checkCoins();
     checkPowers();
 
-    // 2. check if the board is clear
+    // 3. check if the board is clear
     checkClear();
+}
+
+void Game::checkGhosts()
+{
+    float ghostX, ghostY, pacmanX, pacmanY;
+    int ghostGridX, ghostGridY, pacmanGridX, pacmanGridY;
+    pacman.getPosition(pacmanX, pacmanY);
+
+    for (auto & ghost : ghosts)
+    {
+        if (!ghost)
+            continue;
+
+        ghost->getPosition(ghostX, ghostY);
+
+        if (sqrt(pow(ghostX-pacmanX, 2) + pow(ghostY-pacmanY, 2))
+            <= DISTANCE_THRESHOLD)
+        {
+            if (isPoweredUp)
+            {
+                ghostDie(ghost);
+                continue;
+            }
+            else
+            {
+                // the pacman die
+                pacmanDie();
+                return;
+            }
+        }
+
+        // get the positions on grid
+        ghostGridX = static_cast<int>(round(ghostX));
+        ghostGridY = static_cast<int>(round(ghostY));
+        pacmanGridX = static_cast<int>(round(pacmanX));
+        pacmanGridY = static_cast<int>(round(pacmanY));
+
+        // get the current direction
+//        auto direction = ghost->getDirection();
+//        bool isNextGridValid = false;
+//        switch(direction)
+//        {
+//            case UP:
+//                isNextGridValid = map.validatePosition(ghostGridX, ghostGridY + 1);
+//                break;
+//            case DOWN:
+//                isNextGridValid = map.validatePosition(ghostGridX, ghostGridY - 1);
+//                break;
+//            case LEFT:
+//                isNextGridValid = map.validatePosition(ghostGridX - 1, ghostGridY);
+//                break;
+//            case RIGHT:
+//                isNextGridValid = map.validatePosition(ghostGridX + 1, ghostGridY);
+//                break;
+//        }
+//
+//        // do not change the direction if the direction is valid
+//        if (isNextGridValid)
+//            return;
+
+        // TODO: the AI is problematic
+        // check the horizontal potision
+        if (ghostGridX == pacmanGridX)
+        {
+            if (pacmanGridY < ghostGridY)
+            {
+                // try going down first, then consider other places
+                if (map.validatePosition(ghostGridX, ghostGridY - 1))
+                    ghost->setDirection(DOWN);
+                else if (map.validatePosition(ghostGridX - 1, ghostGridY))
+                    ghost->setDirection(LEFT);
+                else if (map.validatePosition(ghostGridX + 1, ghostGridY))
+                    ghost->setDirection(RIGHT);
+                else if (map.validatePosition(ghostGridX, ghostGridY + 1))
+                    ghost->setDirection(UP);
+            }
+            else
+            {
+                if (map.validatePosition(ghostGridX, ghostGridY + 1))
+                    ghost->setDirection(UP);
+                else if (map.validatePosition(ghostGridX - 1, ghostGridY))
+                    ghost->setDirection(LEFT);
+                else if (map.validatePosition(ghostGridX + 1, ghostGridY))
+                    ghost->setDirection(RIGHT);
+                else if (map.validatePosition(ghostGridX, ghostGridY - 1))
+                    ghost->setDirection(DOWN);
+            }
+        }
+        else if (ghostGridX < pacmanGridX)
+        {
+            if (map.validatePosition(ghostGridX + 1, ghostGridY))
+                ghost->setDirection(RIGHT);
+            else if (map.validatePosition(ghostGridX, ghostGridY + 1))
+                ghost->setDirection(UP);
+            else if (map.validatePosition(ghostGridX, ghostGridY - 1))
+                ghost->setDirection(DOWN);
+            else if (map.validatePosition(ghostGridX - 1, ghostGridY))
+                ghost->setDirection(LEFT);
+        }
+        else
+        {
+            if (map.validatePosition(ghostGridX - 1, ghostGridY))
+                ghost->setDirection(LEFT);
+            else if (map.validatePosition(ghostGridX, ghostGridY + 1))
+                ghost->setDirection(UP);
+            else if (map.validatePosition(ghostGridX, ghostGridY - 1))
+                ghost->setDirection(DOWN);
+            else if (map.validatePosition(ghostGridX + 1, ghostGridY))
+                ghost->setDirection(RIGHT);
+        }
+    }
 }
 
 void Game::checkCoins()
@@ -213,7 +371,8 @@ void Game::setPowerUp(bool isPowerUp)
     {
         powerUpTimer.start(5000);
         for (auto & ghost : ghosts)
-            ghost->setColor(ECE_Color::WHITE);
+            if (ghost)
+                ghost->setColor(ECE_Color::WHITE);
 
         isPoweredUp = true;
     }
@@ -221,7 +380,31 @@ void Game::setPowerUp(bool isPowerUp)
     {
         // reset the color
         for (int i=0; i<4; ++i)
-            ghosts[i]->setColor(ghostColors[i]);
+            if (ghosts[i])
+                ghosts[i]->setColor(ghostColors[i]);
         isPoweredUp = false;
     }
+}
+
+void Game::pacmanDie()
+{
+    ++numDeaths;
+    isDead = true;
+    if (numDeaths == 3)
+        isLost = true;
+}
+
+void Game::ghostDie(ECE_Ghost* &ghost)
+{
+    delete ghost;
+    ghost = nullptr;
+}
+
+void Game::resetForDeath()
+{
+    releaseResources();
+    initializeObjects();
+    pacman.setMoving(false);
+    isPoweredUp = false;
+    isDead = false;
 }

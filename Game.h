@@ -21,10 +21,16 @@ public:
 
     void keyboard(unsigned char key);
 
+    void reset();
+
 private:
+    void initializeObjects();
+    void releaseResources();
+
     /** Check the current state and do some updates
      */
     void check();
+    void checkGhosts();
     void checkCoins();
     void checkPowers();
     void checkClear();
@@ -33,6 +39,14 @@ private:
      * @param isPowerUp
      */
     void setPowerUp(bool isPowerUp);
+
+    /** Set the pacman die and change the status
+     */
+    void pacmanDie();
+
+    static void ghostDie(ECE_Ghost* &ghost);
+
+    void resetForDeath();
 
     /// objects in the game
     ECE_Map map;
@@ -47,5 +61,8 @@ private:
     bool isPoweredUp;
     Timer powerUpTimer;
     bool isWin;
+    bool isDead;
+    bool isLost;
+    int numDeaths;
 };
 
