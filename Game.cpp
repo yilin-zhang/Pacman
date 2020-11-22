@@ -8,14 +8,9 @@
 
 Game::Game():
 pacman(map, 8.f, 4.f),
-ghosts(),
-coins(),
-powers(),
-isPoweredUp(false),
-isWin(false),
-isDead(false),
-isLost(false),
-numDeaths(0)
+ghosts(), coins(), powers(), // empty arrays
+pathFinder(map),
+isPoweredUp(false), isWin(false), isDead(false), isLost(false), numDeaths(0)
 {
     initializeObjects();
 }
@@ -206,7 +201,8 @@ void Game::checkGhosts()
 
         ghost->getPosition(ghostX, ghostY);
 
-        if (sqrt(pow(ghostX-pacmanX, 2) + pow(ghostY-pacmanY, 2))
+        // check if the pacman and the ghost is very close
+        if (sqrt(pow(ghostX - pacmanX, 2) + pow(ghostY - pacmanY, 2))
             <= DISTANCE_THRESHOLD)
         {
             if (isPoweredUp)
@@ -222,85 +218,7 @@ void Game::checkGhosts()
             }
         }
 
-        // get the positions on grid
-        ghostGridX = static_cast<int>(round(ghostX));
-        ghostGridY = static_cast<int>(round(ghostY));
-        pacmanGridX = static_cast<int>(round(pacmanX));
-        pacmanGridY = static_cast<int>(round(pacmanY));
-
-        // get the current direction
-//        auto direction = ghost->getDirection();
-//        bool isNextGridValid = false;
-//        switch(direction)
-//        {
-//            case UP:
-//                isNextGridValid = map.validatePosition(ghostGridX, ghostGridY + 1);
-//                break;
-//            case DOWN:
-//                isNextGridValid = map.validatePosition(ghostGridX, ghostGridY - 1);
-//                break;
-//            case LEFT:
-//                isNextGridValid = map.validatePosition(ghostGridX - 1, ghostGridY);
-//                break;
-//            case RIGHT:
-//                isNextGridValid = map.validatePosition(ghostGridX + 1, ghostGridY);
-//                break;
-//        }
-//
-//        // do not change the direction if the direction is valid
-//        if (isNextGridValid)
-//            return;
-
-        // TODO: the AI is problematic
-        // check the horizontal potision
-        if (ghostGridX == pacmanGridX)
-        {
-            if (pacmanGridY < ghostGridY)
-            {
-                // try going down first, then consider other places
-                if (map.validatePosition(ghostGridX, ghostGridY - 1))
-                    ghost->setDirection(DOWN);
-                else if (map.validatePosition(ghostGridX - 1, ghostGridY))
-                    ghost->setDirection(LEFT);
-                else if (map.validatePosition(ghostGridX + 1, ghostGridY))
-                    ghost->setDirection(RIGHT);
-                else if (map.validatePosition(ghostGridX, ghostGridY + 1))
-                    ghost->setDirection(UP);
-            }
-            else
-            {
-                if (map.validatePosition(ghostGridX, ghostGridY + 1))
-                    ghost->setDirection(UP);
-                else if (map.validatePosition(ghostGridX - 1, ghostGridY))
-                    ghost->setDirection(LEFT);
-                else if (map.validatePosition(ghostGridX + 1, ghostGridY))
-                    ghost->setDirection(RIGHT);
-                else if (map.validatePosition(ghostGridX, ghostGridY - 1))
-                    ghost->setDirection(DOWN);
-            }
-        }
-        else if (ghostGridX < pacmanGridX)
-        {
-            if (map.validatePosition(ghostGridX + 1, ghostGridY))
-                ghost->setDirection(RIGHT);
-            else if (map.validatePosition(ghostGridX, ghostGridY + 1))
-                ghost->setDirection(UP);
-            else if (map.validatePosition(ghostGridX, ghostGridY - 1))
-                ghost->setDirection(DOWN);
-            else if (map.validatePosition(ghostGridX - 1, ghostGridY))
-                ghost->setDirection(LEFT);
-        }
-        else
-        {
-            if (map.validatePosition(ghostGridX - 1, ghostGridY))
-                ghost->setDirection(LEFT);
-            else if (map.validatePosition(ghostGridX, ghostGridY + 1))
-                ghost->setDirection(UP);
-            else if (map.validatePosition(ghostGridX, ghostGridY - 1))
-                ghost->setDirection(DOWN);
-            else if (map.validatePosition(ghostGridX + 1, ghostGridY))
-                ghost->setDirection(RIGHT);
-        }
+        pathFinder.updateGhostDirection(pacman, *ghost);
     }
 }
 

@@ -54,7 +54,7 @@ void ECE_Map::initializeObjects()
         }
     }
 }
-bool ECE_Map::validatePosition(int x, int y)
+bool ECE_Map::validatePosition(int x, int y) const
 {
     if (x < 0 || x >= MAZE_COLS || y < 0 || y >= MAZE_ROWS)
         return false;
@@ -63,7 +63,7 @@ bool ECE_Map::validatePosition(int x, int y)
     return !(initialMap[y][x] == NoPath);
 }
 
-bool ECE_Map::validatePosition(float x, float y)
+bool ECE_Map::validatePosition(float x, float y) const
 {
     int xFloor = floor(x);
     int xCeil = ceil(x);

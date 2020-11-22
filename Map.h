@@ -19,14 +19,14 @@ public:
      * @param y
      * @return
      */
-    bool validatePosition(int x, int y);
+    bool validatePosition(int x, int y) const;
 
     /** Validate the given position
      * @param x
      * @param y
      * @return
      */
-    bool validatePosition(float x, float y);
+    bool validatePosition(float x, float y) const;
 
 private:
     void initializeObjects();

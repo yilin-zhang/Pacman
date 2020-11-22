@@ -7,6 +7,7 @@
 #include "Maze.h"
 #include "Objects.h"
 #include "Utils.h"
+#include "PathFinder.h"
 #include <array>
 
 class Game
@@ -40,12 +41,15 @@ private:
      */
     void setPowerUp(bool isPowerUp);
 
-    /** Set the pacman die and change the status
-     */
+    /** Set the pacman die and change the status */
     void pacmanDie();
 
+    /** Set the ghost Die
+     * @param ghost
+     */
     static void ghostDie(ECE_Ghost* &ghost);
 
+    /** Reset the game because of the pacman death */
     void resetForDeath();
 
     /// objects in the game
@@ -58,6 +62,7 @@ private:
     const std::array<ECE_Color, 4> ghostColors = {ECE_Color::GREEN, ECE_Color::PINK, ECE_Color::ORANGE, ECE_Color::RED};
 
     /// other members
+    PathFinder pathFinder;
     bool isPoweredUp;
     Timer powerUpTimer;
     bool isWin;
