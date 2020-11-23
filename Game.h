@@ -72,6 +72,7 @@ private:
     std::array<Timer, 4> ghostRebirthTimers;
     Timer lastGhostRebirthTimer;
     // game status
+    bool isRunning;
     bool isWin;
     bool isDead;
     bool isLost;

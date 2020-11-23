@@ -8,7 +8,7 @@
 class PathFinder
 {
 public:
-    PathFinder(const ECE_Map &map);
+    explicit PathFinder(const ECE_Map &map);
     ~PathFinder();
     void updateGhostDirection(const ECE_Pacman &pacman, ECE_Ghost &ghost);
 

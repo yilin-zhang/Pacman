@@ -10,7 +10,7 @@ Game::Game():
 pacman(map, 8.f, 4.f),
 ghosts(), coins(), powers(), // empty arrays
 pathFinder(map),
-isPoweredUp(false), isWin(false), isDead(false), isLost(false), numDeaths(0)
+isRunning(false), isPoweredUp(false), isWin(false), isDead(false), isLost(false), numDeaths(0)
 {
     initializeObjects();
 }
@@ -22,6 +22,9 @@ Game::~Game()
 
 void Game::updateState()
 {
+    if (!isRunning)
+        return;
+
     // update the states
     pacman.updatePosition();
     for (auto & ghost : ghosts)
@@ -30,9 +33,12 @@ void Game::updateState()
 
     check();
 
-    // TODO: this is just a place holder
     if (isWin)
-        pacman.setColor(ECE_Color::GREEN);
+    {
+        reset();
+        std::cout << "you win!" << std::endl;
+        return;
+    }
 
     if (isLost)
     {
@@ -72,6 +78,8 @@ void Game::keyboard(unsigned char key)
     if (!(key == 'w' || key == 's' || key == 'a' || key == 'd'))
         return;
 
+    isRunning = true;
+
     if (!pacman.checkMoving())
         pacman.setMoving(true);
 
@@ -101,8 +109,11 @@ void Game::reset()
     releaseResources();
     initializeObjects();
     pacman.setMoving(false);
+    isRunning = false;
     isPoweredUp = false;
+    isWin = false;
     isDead = false;
+    isLost = false;
     numDeaths = 0;
 }
 
@@ -354,6 +365,8 @@ void Game::resetForDeath()
     releaseResources();
     initializeObjects();
     pacman.setMoving(false);
+    isRunning = false;
     isPoweredUp = false;
+    isWin = false;
     isDead = false;
 }
