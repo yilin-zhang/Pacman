@@ -10,7 +10,7 @@ Class declarations and constant definitions
 
 #include <array>
 #include <vector>
-#include "Config.h"
+#include "Utils.h"
 #include "Map.h"
 
 class ECE_Object

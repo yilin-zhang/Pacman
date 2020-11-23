@@ -6,6 +6,28 @@
 #include <array>
 #include "Config.h"
 
+enum ECE_Color
+{
+    BLACK,
+    WHITE,
+    RED,
+    GREEN,
+    YELLOW,
+    ORANGE,
+    PINK,
+    BLUE,
+    SILVER,
+    GOLDEN
+};
+
+enum Direction
+{
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT
+};
+
 /** Convert the color to it's float RGB values
  * @param color
  * @param red
@@ -29,7 +51,7 @@ public:
     ~Timer();
     void start(float ms);
     void update();
-    bool check();
+    bool isFinished() const;
 private:
     bool isCounting;
     bool finished;

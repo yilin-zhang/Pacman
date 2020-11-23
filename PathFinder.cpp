@@ -46,7 +46,7 @@ void PathFinder::updateGhostDirection(const ECE_Pacman &pacman, ECE_Ghost &ghost
 //            return;
 
     // TODO: the AI is problematic
-    // check the horizontal potision
+    // isFinished the horizontal potision
     if (ghostGridX == pacmanGridX)
     {
         if (pacmanGridY < ghostGridY)

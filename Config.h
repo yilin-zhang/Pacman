@@ -26,6 +26,9 @@ const float GRID_SIZE = 1.0;
 
 // the range threshold in which the two objects are considered touching each other
 const float DISTANCE_THRESHOLD = 0.5f;
+const float GHOST_RESPAWN_TIME = 5000.f; // ms
+const float MIN_RESPAWN_DURATION = 2000.f; // ms
+const float POWERUP_DURATION = 5000.f; // ms
 
 // TODO: optimize this
 const std::string MAP_PATH = "/Users/yilin/Desktop/pacman/map.txt";
@@ -37,25 +40,4 @@ const std::string MAP_PATH = "/Users/yilin/Desktop/pacman/map.txt";
 const float FRAME_RATE = 60; // FPS
 const unsigned int FRAME_TIME = static_cast<unsigned int>(1.f/FRAME_RATE*1000.f); // ms
 
-enum ECE_Color
-{
-    BLACK,
-    WHITE,
-    RED,
-    GREEN,
-    YELLOW,
-    ORANGE,
-    PINK,
-    BLUE,
-    SILVER,
-    GOLDEN
-};
-
-enum Direction
-{
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT
-};
 

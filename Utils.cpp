@@ -74,7 +74,7 @@ void positionToCoordinate(float x, float y, float &cX, float &cY)
 /// Timer
 //////////////////////////////////////////////////
 
-Timer::Timer():isCounting(false), finished(false), counter(0), maxVal(0) {}
+Timer::Timer():isCounting(false), finished(true), counter(0), maxVal(0) {}
 Timer::~Timer()= default;
 
 void Timer::start(float ms)
@@ -97,7 +97,7 @@ void Timer::update()
     }
 }
 
-bool Timer::check()
+bool Timer::isFinished() const
 {
     return finished;
 }

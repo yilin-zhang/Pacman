@@ -35,6 +35,7 @@ private:
     void checkCoins();
     void checkPowers();
     void checkClear();
+    void checkGhostRespawn();
 
     /** Turn on or off the power-up state
      * @param isPowerUp
@@ -47,7 +48,7 @@ private:
     /** Set the ghost Die
      * @param ghost
      */
-    static void ghostDie(ECE_Ghost* &ghost);
+    static void ghostDie(ECE_Ghost* &ghost, Timer &rebirthTimer);
 
     /** Reset the game because of the pacman death */
     void resetForDeath();
@@ -62,9 +63,15 @@ private:
     const std::array<ECE_Color, 4> ghostColors = {ECE_Color::GREEN, ECE_Color::PINK, ECE_Color::ORANGE, ECE_Color::RED};
 
     /// other members
+    // path finder
     PathFinder pathFinder;
+    // handling power-up
     bool isPoweredUp;
     Timer powerUpTimer;
+    // handling the rebirth of ghosts
+    std::array<Timer, 4> ghostRebirthTimers;
+    Timer lastGhostRebirthTimer;
+    // game status
     bool isWin;
     bool isDead;
     bool isLost;

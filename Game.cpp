@@ -47,16 +47,6 @@ void Game::updateState()
         std::cout << "you dead!" << std::endl;
         return;
     }
-
-
-    // check if powered up
-    if (isPoweredUp)
-    {
-        powerUpTimer.update();
-        // if the time is up, turn the power-up off
-        if (powerUpTimer.check())
-            setPowerUp(false);
-    }
 }
 
 void Game::display()
@@ -176,38 +166,53 @@ void Game::releaseResources()
 
 void Game::check()
 {
-    // 1. check if the ghosts need to change their directions
+    // 1. isFinished if the ghosts need to change their directions
     checkGhosts();
 
-    // 2. check if the pacman is close to a coin or a power
+    // 2. isFinished if the pacman is close to a coin or a power
     // remove the coin if they are close
     checkCoins();
     checkPowers();
 
-    // 3. check if the board is clear
+    // 3. isFinished if the board is clear
     checkClear();
+
+    // 4. check if a ghost should respawn
+    checkGhostRespawn();
+
+    // isFinished if powered up
+    if (isPoweredUp)
+    {
+        powerUpTimer.update();
+        // if the time is up, turn the power-up off
+        if (powerUpTimer.isFinished())
+            setPowerUp(false);
+    }
 }
 
 void Game::checkGhosts()
 {
     float ghostX, ghostY, pacmanX, pacmanY;
-    int ghostGridX, ghostGridY, pacmanGridX, pacmanGridY;
+    int ghostId = -1;
+
     pacman.getPosition(pacmanX, pacmanY);
 
     for (auto & ghost : ghosts)
     {
+        ++ghostId;
+
         if (!ghost)
             continue;
 
         ghost->getPosition(ghostX, ghostY);
 
-        // check if the pacman and the ghost is very close
+        // isFinished if the pacman and the ghost is very close
         if (sqrt(pow(ghostX - pacmanX, 2) + pow(ghostY - pacmanY, 2))
             <= DISTANCE_THRESHOLD)
         {
             if (isPoweredUp)
             {
-                ghostDie(ghost);
+                ghostDie(ghost, ghostRebirthTimers[ghostId]);
                 continue;
             }
             else
@@ -283,11 +288,36 @@ void Game::checkClear()
     isWin = true;
 }
 
+void Game::checkGhostRespawn()
+{
+    // update the timers
+    for (auto & timer : ghostRebirthTimers)
+        timer.update();
+
+    lastGhostRebirthTimer.update();
+
+    int ghostId = 0;
+    for (auto & ghost : ghosts)
+    {
+        // if there's no ghost respawning within the minimum duration
+        if (lastGhostRebirthTimer.isFinished())
+        {
+            // check if the corresponding timer is finished and the ghost does not exist
+            if (!ghost && ghostRebirthTimers[ghostId].isFinished())
+            {
+                ghost = new ECE_Ghost(map, 8.f, 12.f, ghostColors[ghostId]);
+                lastGhostRebirthTimer.start(MIN_RESPAWN_DURATION); // start the timer
+            }
+        }
+        ++ghostId;
+    }
+}
+
 void Game::setPowerUp(bool isPowerUp)
 {
     if (isPowerUp)
     {
-        powerUpTimer.start(5000);
+        powerUpTimer.start(POWERUP_DURATION);
         for (auto & ghost : ghosts)
             if (ghost)
                 ghost->setColor(ECE_Color::WHITE);
@@ -312,10 +342,11 @@ void Game::pacmanDie()
         isLost = true;
 }
 
-void Game::ghostDie(ECE_Ghost* &ghost)
+void Game::ghostDie(ECE_Ghost* &ghost, Timer &rebirthTimer)
 {
     delete ghost;
     ghost = nullptr;
+    rebirthTimer.start(GHOST_RESPAWN_TIME);
 }
 
 void Game::resetForDeath()

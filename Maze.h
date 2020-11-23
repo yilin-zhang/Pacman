@@ -5,7 +5,7 @@
 #pragma once
 #include <vector>
 #include <array>
-#include "Config.h"
+#include "Utils.h"
 
 
 class ECE_Maze
