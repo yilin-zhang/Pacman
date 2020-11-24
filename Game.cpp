@@ -231,20 +231,22 @@ void Game::checkGhosts()
             <= DISTANCE_THRESHOLD)
         {
             if (isPoweredUp)
-            {
                 ghostDie(ghost, ghostRebirthTimers[ghostId]);
-                continue;
-            }
             else
             {
-                // the pacman die
                 pacmanDie();
-                return;
+                return;  // start over
             }
         }
+    }
 
-        // TODO: multithread-this part
-        pathFinder.updateGhostDirection(pacman, *ghost);
+    // multi-thread the path finding
+    omp_set_num_threads(4);
+    #pragma omp parallel default(none)
+    {
+        auto id = omp_get_thread_num();
+        if (ghosts[id])
+            pathFinder.updateGhostDirection(pacman, *ghosts[id]);
     }
 }
 
