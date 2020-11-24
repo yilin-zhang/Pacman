@@ -18,6 +18,7 @@
 
 #include <vector>
 #include <string>
+#include <omp.h>
 
 // constant definitions
 const int MAZE_ROWS = 20;

@@ -60,7 +60,7 @@ bool ECE_Map::validatePosition(int x, int y) const
         return false;
 
     // Note that the order of x and y is revered
-    return !(initialMap[y][x] == NoPath);
+    return  initialMap[y][x] != NoPath;
 }
 
 bool ECE_Map::validatePosition(float x, float y) const

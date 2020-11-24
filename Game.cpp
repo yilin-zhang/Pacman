@@ -166,13 +166,22 @@ void Game::initializeObjects()
 void Game::releaseResources()
 {
     for (auto & ghost : ghosts)
+    {
         delete ghost;
+        ghost = nullptr;
+    }
 
     for (auto & coin : coins)
+    {
         delete coin;
+        coin = nullptr;
+    }
 
     for (auto & power : powers)
+    {
         delete power;
+        power = nullptr;
+    }
 }
 
 void Game::check()
@@ -234,6 +243,7 @@ void Game::checkGhosts()
             }
         }
 
+        // TODO: multithread-this part
         pathFinder.updateGhostDirection(pacman, *ghost);
     }
 }
@@ -316,7 +326,11 @@ void Game::checkGhostRespawn()
             // check if the corresponding timer is finished and the ghost does not exist
             if (!ghost && ghostRebirthTimers[ghostId].isFinished())
             {
-                ghost = new ECE_Ghost(map, 8.f, 12.f, ghostColors[ghostId]);
+                if (!isPoweredUp)
+                    ghost = new ECE_Ghost(map, 8.f, 12.f, ghostColors[ghostId]);
+                else
+                    ghost = new ECE_Ghost(map, 8.f, 12.f, ECE_Color::WHITE);
+
                 lastGhostRebirthTimer.start(MIN_RESPAWN_DURATION); // start the timer
             }
         }
