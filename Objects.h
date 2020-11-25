@@ -69,17 +69,17 @@ public:
     /** Check if the status is moving
      * @return
      */
-    bool checkMoving();
+    bool checkMoving() const;
 
     /** Set the moving direction
      * @param direction
      */
     void setDirection(Direction direction);
 
-    /** Get the current direction
-     * @return the current direction
+    /** Get the moving direction
+     * @return
      */
-    Direction getDirection();
+    Direction getDirection() const;
 
     /** Update the position
      * @return true if the character has moved

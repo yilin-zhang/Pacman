@@ -5,8 +5,13 @@
 #include "PathFinder.h"
 #include <cmath>
 
-PathFinder::PathFinder(const ECE_Map &map):map(map) {}
+PathFinder::PathFinder(const ECE_Map &map):map(map), isChasing(true) {}
 PathFinder::~PathFinder()= default;
+
+void PathFinder::setChasing(bool isChasing)
+{
+    this->isChasing = isChasing;
+}
 
 void PathFinder::updateGhostDirection(const ECE_Pacman &pacman, ECE_Ghost &ghost)
 {
@@ -22,77 +27,61 @@ void PathFinder::updateGhostDirection(const ECE_Pacman &pacman, ECE_Ghost &ghost
     pacmanGridX = static_cast<int>(round(pacmanX));
     pacmanGridY = static_cast<int>(round(pacmanY));
 
-    // get the current direction
-//        auto direction = ghost->getDirection();
-//        bool isNextGridValid = false;
-//        switch(direction)
-//        {
-//            case UP:
-//                isNextGridValid = map.validatePosition(ghostGridX, ghostGridY + 1);
-//                break;
-//            case DOWN:
-//                isNextGridValid = map.validatePosition(ghostGridX, ghostGridY - 1);
-//                break;
-//            case LEFT:
-//                isNextGridValid = map.validatePosition(ghostGridX - 1, ghostGridY);
-//                break;
-//            case RIGHT:
-//                isNextGridValid = map.validatePosition(ghostGridX + 1, ghostGridY);
-//                break;
-//        }
-//
-//        // do not change the direction if the direction is valid
-//        if (isNextGridValid)
-//            return;
+    Direction currentDirection = ghost.getDirection();
+    std::vector<Direction> availableDirections;
+    std::vector<std::array<int, 2>> availablePositions;
 
-    // TODO: the AI is problematic
-    // isFinished the horizontal potision
-    if (ghostGridX == pacmanGridX)
+    switch(currentDirection)
     {
-        if (pacmanGridY < ghostGridY)
-        {
-            // try going down first, then consider other places
-            if (map.validatePosition(ghostGridX, ghostGridY - 1))
-                ghost.setDirection(DOWN);
-            else if (map.validatePosition(ghostGridX - 1, ghostGridY))
-                ghost.setDirection(LEFT);
-            else if (map.validatePosition(ghostGridX + 1, ghostGridY))
-                ghost.setDirection(RIGHT);
-            else if (map.validatePosition(ghostGridX, ghostGridY + 1))
-                ghost.setDirection(UP);
-        }
-        else
-        {
-            if (map.validatePosition(ghostGridX, ghostGridY + 1))
-                ghost.setDirection(UP);
-            else if (map.validatePosition(ghostGridX - 1, ghostGridY))
-                ghost.setDirection(LEFT);
-            else if (map.validatePosition(ghostGridX + 1, ghostGridY))
-                ghost.setDirection(RIGHT);
-            else if (map.validatePosition(ghostGridX, ghostGridY - 1))
-                ghost.setDirection(DOWN);
-        }
+        case UP:
+            availableDirections = {LEFT, UP, RIGHT};
+            availablePositions = {{ghostGridX-1, ghostGridY},
+                                  {ghostGridX, ghostGridY+1},
+                                  {ghostGridX+1, ghostGridY}};
+            break;
+        case DOWN:
+            availableDirections = {LEFT, DOWN, RIGHT};
+            availablePositions = {{ghostGridX-1, ghostGridY},
+                                  {ghostGridX, ghostGridY-1},
+                                  {ghostGridX+1, ghostGridY}};
+            break;
+        case LEFT:
+            availableDirections = {LEFT, UP, DOWN};
+            availablePositions = {{ghostGridX-1, ghostGridY},
+                                  {ghostGridX, ghostGridY+1},
+                                  {ghostGridX, ghostGridY-1}};
+            break;
+        case RIGHT:
+            availableDirections = {RIGHT, UP, DOWN};
+            availablePositions = {{ghostGridX+1, ghostGridY},
+                                  {ghostGridX, ghostGridY+1},
+                                  {ghostGridX, ghostGridY-1}};
+            break;
     }
-    else if (ghostGridX < pacmanGridX)
-    {
-        if (map.validatePosition(ghostGridX + 1, ghostGridY))
-            ghost.setDirection(RIGHT);
-        else if (map.validatePosition(ghostGridX, ghostGridY + 1))
-            ghost.setDirection(UP);
-        else if (map.validatePosition(ghostGridX, ghostGridY - 1))
-            ghost.setDirection(DOWN);
-        else if (map.validatePosition(ghostGridX - 1, ghostGridY))
-            ghost.setDirection(LEFT);
-    }
+
+    Direction nextDirection = UP;
+    float distance2ToCompare;
+    if (isChasing)
+        distance2ToCompare = 100000.f;
     else
+        distance2ToCompare = 0.f;
+
+    for (int i=0; i<3; ++i)
     {
-        if (map.validatePosition(ghostGridX - 1, ghostGridY))
-            ghost.setDirection(LEFT);
-        else if (map.validatePosition(ghostGridX, ghostGridY + 1))
-            ghost.setDirection(UP);
-        else if (map.validatePosition(ghostGridX, ghostGridY - 1))
-            ghost.setDirection(DOWN);
-        else if (map.validatePosition(ghostGridX + 1, ghostGridY))
-            ghost.setDirection(RIGHT);
+        auto x = availablePositions[i][0];
+        auto y = availablePositions[i][1];
+        if (!map.validatePosition(x, y))
+            continue;
+
+        auto distance2 = static_cast<float>(pow(pacmanGridX - x, 2) + pow(pacmanGridY - y, 2));
+        if ((isChasing && (distance2 < distance2ToCompare)) ||
+            (!isChasing && (distance2 > distance2ToCompare)))
+        {
+            distance2ToCompare = distance2;
+            nextDirection = availableDirections[i];
+        }
     }
+
+    ghost.setDirection(nextDirection);
+
 }

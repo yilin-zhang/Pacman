@@ -50,7 +50,7 @@ void Game::updateState()
     if (isDead)
     {
         resetForDeath();
-        std::cout << "you dead!" << std::endl;
+        std::cout << "you die!" << std::endl;
         return;
     }
 }
@@ -122,45 +122,31 @@ void Game::initializeObjects()
     pacman.setPosition(8.f, 4.f);
 
     // initialize the ghosts
-    ghosts[0] = new ECE_Ghost(map, 7.f, 10.f, ghostColors[0]);
-    ghosts[1] = new ECE_Ghost(map, 8.f, 10.f, ghostColors[1]);
-    ghosts[2] = new ECE_Ghost(map, 9.f, 10.f, ghostColors[2]);
+//    ghosts[0] = new ECE_Ghost(map, 7.f, 10.f, ghostColors[0]);
+//    ghosts[1] = new ECE_Ghost(map, 8.f, 10.f, ghostColors[1]);
+//    ghosts[2] = new ECE_Ghost(map, 9.f, 10.f, ghostColors[2]);
+//    ghosts[3] = new ECE_Ghost(map, 8.f, 12.f, ghostColors[3]);
+    ghosts[0] = new ECE_Ghost(map, 7.f, 12.f, ghostColors[0]);
+    ghosts[1] = new ECE_Ghost(map, 8.f, 12.f, ghostColors[1]);
+    ghosts[2] = new ECE_Ghost(map, 9.f, 12.f, ghostColors[2]);
     ghosts[3] = new ECE_Ghost(map, 8.f, 12.f, ghostColors[3]);
 
-    // TODO: Ugly code, initialize these using the information in map
-    // coins initialization
-    std::vector<std::vector<int>> coinPositions(17); // indices of coins in every column
-    coinPositions[0] = {0, 1, 2, 5, 6, 14, 15, 16, 17, 19};
-    coinPositions[1] = {0, 2, 3, 4, 6, 14, 16, 19};
-    coinPositions[2] = {0, 2, 6, 14, 16, 19};
-    coinPositions[3] = {0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
-    coinPositions[4] = {0, 4, 6, 16, 19};
-    coinPositions[5] = {0, 2, 3, 4, 6, 14, 15, 16, 19};
-    coinPositions[6] = {0, 2, 4, 6, 14, 16, 19};
-    coinPositions[7] = {0, 1, 2, 4, 5, 6, 14, 16, 17, 18, 19};
-    coinPositions[8] = {0, 16};
     int coinsCounter = 0;
-    for (int x=0; x<=7; ++x)
-    {
-        for (auto &y : coinPositions[x])
+    int powersCounter = 0;
+    for (int x=0; x<MAZE_COLS; ++x)
+        for (int y=0; y<MAZE_ROWS; ++y)
         {
-            coins[coinsCounter] = new ECE_Coin(map, static_cast<float>(x), static_cast<float>(y));
-            ++coinsCounter;
-            coins[coinsCounter] = new ECE_Coin(map, static_cast<float>(16-x), static_cast<float>(y));
-            ++coinsCounter;
+            if (map.getObjectType(x, y) == ECE_Map::Coin)
+            {
+                coins[coinsCounter] = new ECE_Coin(map, static_cast<float>(x), static_cast<float>(y));
+                ++coinsCounter;
+            }
+            else if (map.getObjectType(x, y) == ECE_Map::Power)
+            {
+                powers[powersCounter] = new ECE_Power(map, static_cast<float>(x), static_cast<float>(y));
+                ++powersCounter;
+            }
         }
-    }
-    for (auto &y : coinPositions[8])
-    {
-        coins[coinsCounter] = new ECE_Coin(map, static_cast<float>(8), static_cast<float>(y));
-        ++coinsCounter;
-    }
-
-    // initialize power
-    powers[0] = new ECE_Power(map, 0.f, 4.f);
-    powers[1] = new ECE_Power(map, 0.f, 18.f);
-    powers[2] = new ECE_Power(map, 16.f, 4.f);
-    powers[3] = new ECE_Power(map, 16.f, 18.f);
 }
 
 void Game::releaseResources()
@@ -350,6 +336,7 @@ void Game::setPowerUp(bool isPowerUp)
                 ghost->setColor(ECE_Color::WHITE);
 
         isPoweredUp = true;
+        pathFinder.setChasing(false);
     }
     else
     {
@@ -358,6 +345,7 @@ void Game::setPowerUp(bool isPowerUp)
             if (ghosts[i])
                 ghosts[i]->setColor(ghostColors[i]);
         isPoweredUp = false;
+        pathFinder.setChasing(true);
     }
 }
 

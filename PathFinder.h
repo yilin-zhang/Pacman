@@ -11,9 +11,11 @@ public:
     explicit PathFinder(const ECE_Map &map);
     ~PathFinder();
     void updateGhostDirection(const ECE_Pacman &pacman, ECE_Ghost &ghost);
+    void setChasing(bool isChasing);
 
 private:
     const ECE_Map &map;
+    bool isChasing;  // true indicates chasing mode, false indicates frightened mode
 };
 
 

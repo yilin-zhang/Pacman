@@ -31,6 +31,9 @@ const float GHOST_RESPAWN_TIME = 5000.f; // ms
 const float MIN_RESPAWN_DURATION = 2000.f; // ms
 const float POWERUP_DURATION = 5000.f; // ms
 
+const float GHOST_SPEED = 0.005;
+const float PACMAN_SPEED = 0.006;
+
 // TODO: optimize this
 const std::string MAP_PATH = "/Users/yilin/Desktop/pacman/map.txt";
 

@@ -149,17 +149,37 @@ void ECE_Character::setMoving(bool isMoving)
     this->isMoving = isMoving;
 }
 
-bool ECE_Character::checkMoving()
+bool ECE_Character::checkMoving() const
 {
     return isMoving;
 }
 
 void ECE_Character::setDirection(Direction direction)
 {
-    movingDirection = direction;
+    auto gridX = static_cast<int>(round(x));
+    auto gridY = static_cast<int>(round(y));
+    bool isValid = false;
+    switch (direction)
+    {
+        case UP:
+            isValid = map.validatePosition(gridX, gridY + 1);
+            break;
+        case DOWN:
+            isValid = map.validatePosition(gridX, gridY - 1);
+            break;
+        case LEFT:
+            isValid = map.validatePosition(gridX - 1, gridY);
+            break;
+        case RIGHT:
+            isValid = map.validatePosition(gridX + 1, gridY);
+            break;
+    }
+
+    if (isValid)
+        movingDirection = direction;
 }
 
-Direction ECE_Character::getDirection()
+Direction ECE_Character::getDirection() const
 {
     return movingDirection;
 }
@@ -176,7 +196,7 @@ void ECE_Character::updatePosition()
 ECE_Ghost::ECE_Ghost(ECE_Map &map, float x, float y, ECE_Color color):ECE_Character(map, x, y, color)
 {
     // override the speed variable
-    speed = 0.005f * static_cast<float>(FRAME_TIME);
+    speed = GHOST_SPEED * static_cast<float>(FRAME_TIME);
 }
 ECE_Ghost::~ECE_Ghost()= default;
 
@@ -209,7 +229,10 @@ void ECE_Ghost::display()
 //////////////////////////////////////////////////
 
 ECE_Pacman::ECE_Pacman(ECE_Map &map, float x, float y):
-ECE_Character(map, x, y, ECE_Color::YELLOW){}
+ECE_Character(map, x, y, ECE_Color::YELLOW)
+{
+    speed = PACMAN_SPEED * static_cast<float>(FRAME_TIME);
+}
 ECE_Pacman::~ECE_Pacman()= default;
 
 void ECE_Pacman::display()

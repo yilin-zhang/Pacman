@@ -76,3 +76,9 @@ bool ECE_Map::validatePosition(float x, float y) const
             validatePosition(xFloor, yCeil)&&
             validatePosition(xCeil, yFloor));
 }
+
+ECE_Map::ObjectType ECE_Map::getObjectType(int x, int y) const
+{
+    // Note that the order of x and y is revered
+    return initialMap[y][x];
+}

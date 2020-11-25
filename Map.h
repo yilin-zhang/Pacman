@@ -28,6 +28,13 @@ public:
      */
     bool validatePosition(float x, float y) const;
 
+    /** Get the object type at the position (x, y)
+     * @param x
+     * @param y
+     * @return
+     */
+    ObjectType getObjectType(int x, int y) const;
+
 private:
     void initializeObjects();
     std::array<std::array<ObjectType, MAZE_COLS>, MAZE_ROWS> initialMap;
