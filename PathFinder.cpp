@@ -59,9 +59,14 @@ void PathFinder::updateGhostDirection(const ECE_Pacman &pacman, ECE_Ghost &ghost
             break;
     }
 
+    int fakePacmanX = 8, fakePacmanY = 12;
+    bool isInHome = false;
+    if (ghostGridY == 10 && ghostGridX <= 9 && ghostGridX >= 7)
+        isInHome = true;
+
     Direction nextDirection = UP;
     float distance2ToCompare;
-    if (isChasing)
+    if (isChasing || isInHome)
         distance2ToCompare = 100000.f;
     else
         distance2ToCompare = 0.f;
@@ -70,12 +75,19 @@ void PathFinder::updateGhostDirection(const ECE_Pacman &pacman, ECE_Ghost &ghost
     {
         auto x = availablePositions[i][0];
         auto y = availablePositions[i][1];
-        if (!map.validatePosition(x, y))
+        if ((!isInHome && !map.validatePosition(x, y)) ||
+            (isInHome && !map.validatePositionWhenGateOpen(x, y)))
             continue;
 
-        auto distance2 = static_cast<float>(pow(pacmanGridX - x, 2) + pow(pacmanGridY - y, 2));
-        if ((isChasing && (distance2 < distance2ToCompare)) ||
-            (!isChasing && (distance2 > distance2ToCompare)))
+        float distance2;
+
+        if (isInHome)
+            distance2 = static_cast<float>(pow(fakePacmanX - x, 2) + pow(fakePacmanY - y, 2));
+        else
+            distance2 = static_cast<float>(pow(pacmanGridX - x, 2) + pow(pacmanGridY - y, 2));
+
+        if (((isInHome || isChasing) && (distance2 < distance2ToCompare)) ||
+            ((!isInHome && !isChasing) && (distance2 > distance2ToCompare)))
         {
             distance2ToCompare = distance2;
             nextDirection = availableDirections[i];

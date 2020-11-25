@@ -56,9 +56,9 @@ void ECE_Object::setColor(ECE_Color color)
 /// ECE_Character
 //////////////////////////////////////////////////
 
-ECE_Character::ECE_Character(ECE_Map &map, float x, float y, ECE_Color color):
+ECE_Character::ECE_Character(ECE_Map &map, float x, float y, ECE_Color color, float speed):
 ECE_Object(map, x, y, color),
-speed(0.012f * static_cast<float>(FRAME_TIME)), isMoving(false), movingDirection(LEFT){}
+speed(speed), isMoving(false), movingDirection(UP){} // this initial direction is important for AI to work properly
 ECE_Character::~ECE_Character()= default;
 
 void ECE_Character::move(Direction direction, float distance)
@@ -124,8 +124,9 @@ void ECE_Character::move(Direction direction, float distance)
         }
     }
 
-    bool isGridValid = map.validatePosition(destGridX, destGridY);
-    bool isPosValid = map.validatePosition(destX, destY);
+    // make sure the ghosts can move out from home
+    bool isGridValid = map.validatePositionWhenGateOpen(destGridX, destGridY);
+    bool isPosValid = map.validatePositionWhenGateOpen(destX, destY);
 
     if (isPosValid)
     {
@@ -156,27 +157,7 @@ bool ECE_Character::checkMoving() const
 
 void ECE_Character::setDirection(Direction direction)
 {
-    auto gridX = static_cast<int>(round(x));
-    auto gridY = static_cast<int>(round(y));
-    bool isValid = false;
-    switch (direction)
-    {
-        case UP:
-            isValid = map.validatePosition(gridX, gridY + 1);
-            break;
-        case DOWN:
-            isValid = map.validatePosition(gridX, gridY - 1);
-            break;
-        case LEFT:
-            isValid = map.validatePosition(gridX - 1, gridY);
-            break;
-        case RIGHT:
-            isValid = map.validatePosition(gridX + 1, gridY);
-            break;
-    }
-
-    if (isValid)
-        movingDirection = direction;
+    movingDirection = direction;
 }
 
 Direction ECE_Character::getDirection() const
@@ -193,11 +174,8 @@ void ECE_Character::updatePosition()
 /// ECE_Ghost
 //////////////////////////////////////////////////
 
-ECE_Ghost::ECE_Ghost(ECE_Map &map, float x, float y, ECE_Color color):ECE_Character(map, x, y, color)
-{
-    // override the speed variable
-    speed = GHOST_SPEED * static_cast<float>(FRAME_TIME);
-}
+ECE_Ghost::ECE_Ghost(ECE_Map &map, float x, float y, ECE_Color color):
+ECE_Character(map, x, y, color, GHOST_SPEED) {}
 ECE_Ghost::~ECE_Ghost()= default;
 
 void ECE_Ghost::display()
@@ -229,11 +207,33 @@ void ECE_Ghost::display()
 //////////////////////////////////////////////////
 
 ECE_Pacman::ECE_Pacman(ECE_Map &map, float x, float y):
-ECE_Character(map, x, y, ECE_Color::YELLOW)
-{
-    speed = PACMAN_SPEED * static_cast<float>(FRAME_TIME);
-}
+ECE_Character(map, x, y, ECE_Color::YELLOW, PACMAN_SPEED) {}
 ECE_Pacman::~ECE_Pacman()= default;
+
+void ECE_Pacman::setDirection(Direction direction)
+{
+    auto gridX = static_cast<int>(round(x));
+    auto gridY = static_cast<int>(round(y));
+    bool isValid = false;
+    switch (direction)
+    {
+        case UP:
+            isValid = map.validatePosition(gridX, gridY + 1);
+            break;
+        case DOWN:
+            isValid = map.validatePosition(gridX, gridY - 1);
+            break;
+        case LEFT:
+            isValid = map.validatePosition(gridX - 1, gridY);
+            break;
+        case RIGHT:
+            isValid = map.validatePosition(gridX + 1, gridY);
+            break;
+    }
+
+    if (isValid)
+        movingDirection = direction;
+}
 
 void ECE_Pacman::display()
 {

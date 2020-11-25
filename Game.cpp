@@ -122,13 +122,9 @@ void Game::initializeObjects()
     pacman.setPosition(8.f, 4.f);
 
     // initialize the ghosts
-//    ghosts[0] = new ECE_Ghost(map, 7.f, 10.f, ghostColors[0]);
-//    ghosts[1] = new ECE_Ghost(map, 8.f, 10.f, ghostColors[1]);
-//    ghosts[2] = new ECE_Ghost(map, 9.f, 10.f, ghostColors[2]);
-//    ghosts[3] = new ECE_Ghost(map, 8.f, 12.f, ghostColors[3]);
-    ghosts[0] = new ECE_Ghost(map, 7.f, 12.f, ghostColors[0]);
-    ghosts[1] = new ECE_Ghost(map, 8.f, 12.f, ghostColors[1]);
-    ghosts[2] = new ECE_Ghost(map, 9.f, 12.f, ghostColors[2]);
+    ghosts[0] = new ECE_Ghost(map, 7.f, 10.f, ghostColors[0]);
+    ghosts[1] = new ECE_Ghost(map, 8.f, 10.f, ghostColors[1]);
+    ghosts[2] = new ECE_Ghost(map, 9.f, 10.f, ghostColors[2]);
     ghosts[3] = new ECE_Ghost(map, 8.f, 12.f, ghostColors[3]);
 
     int coinsCounter = 0;
@@ -228,11 +224,11 @@ void Game::checkGhosts()
 
     // multi-thread the path finding
     omp_set_num_threads(4);
-    #pragma omp parallel default(none)
+    #pragma omp parallel for default(none)
+    for (int i=0; i<4; ++i)
     {
-        auto id = omp_get_thread_num();
-        if (ghosts[id])
-            pathFinder.updateGhostDirection(pacman, *ghosts[id]);
+        if (ghosts[i])
+            pathFinder.updateGhostDirection(pacman, *ghosts[i]);
     }
 }
 
@@ -315,9 +311,9 @@ void Game::checkGhostRespawn()
             if (!ghost && ghostRebirthTimers[ghostId].isFinished())
             {
                 if (!isPoweredUp)
-                    ghost = new ECE_Ghost(map, 8.f, 12.f, ghostColors[ghostId]);
+                    ghost = new ECE_Ghost(map, 8.f, 10.f, ghostColors[ghostId]);
                 else
-                    ghost = new ECE_Ghost(map, 8.f, 12.f, ECE_Color::WHITE);
+                    ghost = new ECE_Ghost(map, 8.f, 10.f, ECE_Color::WHITE);
 
                 lastGhostRebirthTimer.start(MIN_RESPAWN_DURATION); // start the timer
             }

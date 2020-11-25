@@ -12,7 +12,7 @@ public:
     ECE_Map();
     ~ECE_Map();
 
-    enum ObjectType {Coin, Power, Ghost, Pacman, Path, NoPath};
+    enum ObjectType {Coin, Power, Pacman, Path, NoPath, Gate};
 
     /** Validate the given position
      * @param x
@@ -28,6 +28,20 @@ public:
      */
     bool validatePosition(float x, float y) const;
 
+    /** Validate the given position and assume the gate is open
+     * @param x
+     * @param y
+     * @return
+     */
+    bool validatePositionWhenGateOpen(int x, int y) const;
+
+    /** Validate the given position and assume the gate is open
+     * @param x
+     * @param y
+     * @return
+     */
+    bool validatePositionWhenGateOpen(float x, float y) const;
+
     /** Get the object type at the position (x, y)
      * @param x
      * @param y
@@ -37,7 +51,7 @@ public:
 
 private:
     void initializeObjects();
-    std::array<std::array<ObjectType, MAZE_COLS>, MAZE_ROWS> initialMap;
+    std::array<std::array<ObjectType, MAZE_COLS>, MAZE_ROWS> initialMap; // x and y are reversed
 };
 
 

@@ -44,7 +44,7 @@ void ECE_Map::initializeObjects()
                     type = Pacman;
                     break;
                 case 'G':
-                    type = Ghost;
+                    type = Gate;
                     break;
                 case '#':
                 default:
@@ -60,7 +60,7 @@ bool ECE_Map::validatePosition(int x, int y) const
         return false;
 
     // Note that the order of x and y is revered
-    return  initialMap[y][x] != NoPath;
+    return  (initialMap[y][x] != NoPath) && (initialMap[y][x] != Gate);
 }
 
 bool ECE_Map::validatePosition(float x, float y) const
@@ -75,6 +75,25 @@ bool ECE_Map::validatePosition(float x, float y) const
             validatePosition(xCeil, yCeil)&&
             validatePosition(xFloor, yCeil)&&
             validatePosition(xCeil, yFloor));
+}
+
+bool ECE_Map::validatePositionWhenGateOpen(int x, int y) const
+{
+    return (initialMap[y][x] == Gate) || validatePosition(x, y);
+}
+
+bool ECE_Map::validatePositionWhenGateOpen(float x, float y) const
+{
+    int xFloor = floor(x);
+    int xCeil = ceil(x);
+
+    int yFloor = floor(y);
+    int yCeil = ceil(y);
+
+    return (validatePositionWhenGateOpen(xFloor, yFloor)&&
+            validatePositionWhenGateOpen(xCeil, yCeil)&&
+            validatePositionWhenGateOpen(xFloor, yCeil)&&
+            validatePositionWhenGateOpen(xCeil, yFloor));
 }
 
 ECE_Map::ObjectType ECE_Map::getObjectType(int x, int y) const

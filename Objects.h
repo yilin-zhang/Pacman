@@ -52,7 +52,7 @@ protected:
 class ECE_Character : public ECE_Object
 {
 public:
-    ECE_Character(ECE_Map &map, float x, float y, ECE_Color color);
+    ECE_Character(ECE_Map &map, float x, float y, ECE_Color color, float speed);
     ~ECE_Character();
 
     /** Move the object (only works when distance < 1)
@@ -74,7 +74,7 @@ public:
     /** Set the moving direction
      * @param direction
      */
-    void setDirection(Direction direction);
+    virtual void setDirection(Direction direction);
 
     /** Get the moving direction
      * @return
@@ -104,6 +104,8 @@ class ECE_Pacman : public ECE_Character
 public:
     ECE_Pacman(ECE_Map &map, float x, float y);
     ~ECE_Pacman();
+
+    void setDirection(Direction direction) override;
 
     /** An additional function to specify the coordinate to display
      * @param cX
