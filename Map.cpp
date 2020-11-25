@@ -3,7 +3,7 @@
 //
 
 #include "Map.h"
-#include <fstream>
+#include <sstream>
 #include <ctgmath>
 
 ECE_Map::ECE_Map():
@@ -16,16 +16,12 @@ ECE_Map::~ECE_Map() = default;
 
 void ECE_Map::initializeObjects()
 {
-    // initialize map file
-    std::fstream mapFile;
-    mapFile.open(MAP_PATH);
-
-    // parse the map file
+    std::stringstream ss (MAP_STRING);
     std::string line;
 
     for (int i=MAZE_ROWS-1; i>=0; --i)
     {
-        mapFile >> line;
+        ss >> line;
         for (int j=0; j<MAZE_COLS; ++j)
         {
             ObjectType type;

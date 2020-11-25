@@ -41,8 +41,26 @@ const float POWERUP_DURATION = 5000.f; // ms
 const float GHOST_SPEED = 0.005f * static_cast<float>(FRAME_TIME);
 const float PACMAN_SPEED = 0.007f * static_cast<float>(FRAME_TIME);
 
-// TODO: optimize this
-const std::string MAP_PATH = "/Users/yilin/Desktop/pacman/map.txt";
+const std::string MAP_STRING = "********#********\n"
+                               "o##*###*#*###*##o\n"
+                               "*##*###*#*###*##*\n"
+                               "*****************\n"
+                               "*##*#*#####*#*##*\n"
+                               "****#***#***#****\n"
+                               "###*###O#O###*###\n"
+                               "###*#OOOOOOO#*###\n"
+                               "###*#O##G##O#*###\n"
+                               "OOO*OO#OOO#OO*OOO\n"
+                               "###*#O#####O#*###\n"
+                               "###*#OOOOOOO#*###\n"
+                               "###*#O#####O#*###\n"
+                               "********#********\n"
+                               "*##*###*#*###*##*\n"
+                               "o*#*****@*****#*o\n"
+                               "#*#*#*#####*#*#*#\n"
+                               "****#***#***#****\n"
+                               "*######*#*######*\n"
+                               "*****************\n";
 
 
 
