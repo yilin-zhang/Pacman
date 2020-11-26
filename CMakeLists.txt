@@ -3,7 +3,6 @@ project(Pacman)
 
 set(CMAKE_CXX_STANDARD 14)
 
-
 if(APPLE)
     # MacOS settings
     link_directories(/usr/local/opt/libomp/lib)
@@ -36,5 +35,5 @@ endif()
 
 find_package(OpenMP REQUIRED)
 
-add_executable(Pacman Config.h Utils.h Utils.cpp Game.h Game.cpp Map.h Map.cpp Maze.h Maze.cpp Objects.h Objects.cpp main.cpp PathFinder.cpp PathFinder.h)
+add_subdirectory(src)
 target_link_libraries(Pacman PRIVATE OpenMP::OpenMP_CXX)

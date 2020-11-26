@@ -14,8 +14,7 @@ public:
     ECE_Maze();
     ~ECE_Maze();
 
-    /** Display the maze
-     */
+    /** Displays the maze */
     void display();
 
 private:
@@ -29,11 +28,16 @@ private:
         BrickRotation rotation;
     };
 
-    // display a half of the brick, whose length is half of the grid size
+    /** Displays a half of the brick, whose length is half of the grid size
+     * @param x the x position
+     * @param y the y position
+     * @param rotation the rotation type
+     */
     void displayHalfBrick(int x, int y, BrickRotation rotation);
 
+    /** Initializes all the wall bricks of the maze */
     void initializeWall();
 
-    std::vector<Brick> wall;
-    ECE_Color color;
+    std::vector<Brick> wall; // stores all the bricks
+    ECE_Color color;         // the color of the maze
 };

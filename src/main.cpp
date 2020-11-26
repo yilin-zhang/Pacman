@@ -1,10 +1,6 @@
-/*
-Author: Yilin Zhang
-Class: ECE6122
-Last Date Modified: 10/24/2020
-Description:
-OpenGL execution
-*/
+//
+// Created by Yilin Zhang on 10/25/20.
+//
 
 #include <cmath>
 #include "Game.h"

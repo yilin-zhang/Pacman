@@ -1,10 +1,6 @@
-/*
-Author: Yilin Zhang
-Class: ECE6122
-Last Date Modified: 10/24/2020
-Description:
-Class declarations and constant definitions
-*/
+//
+// Created by Yilin Zhang on 11/25/20.
+//
 
 #pragma once
 
@@ -19,26 +15,28 @@ public:
     ECE_Object(ECE_Map &map, float x, float y, ECE_Color color);
     ~ECE_Object();
 
-    /** Set the current position
+    /** Sets the current position
      * @param x
      * @param y
      */
     void setPosition(float x, float y);
 
+    /** Assigns the x and y positions to the arguments
+     * @param x
+     * @param y
+     */
     void getPosition(float &x, float &y) const;
 
-    /** Set the color of the object
+    /** Sets the color of the object
      * @param color
      */
     void setColor(ECE_Color color);
 
-    /** Implement this function to display on screen
-     */
+    /** Implement this function to display the object on screen */
     virtual void display() = 0;
 protected:
 
-    /** Get the coordinate of the object according to the current position
-     *
+    /** Assigns the coordinate of the object according to the current position to the arguments
      * @param cX
      * @param cY
      */
@@ -55,41 +53,41 @@ public:
     ECE_Character(ECE_Map &map, float x, float y, ECE_Color color, float speed);
     ~ECE_Character();
 
-    /** Move the object (only works when distance < 1)
+    /** Moves the object (only works when distance < 1)
      * @param direction
      * @param distance
      */
     void move(Direction direction, float distance);
 
-    /** Set the moving status of the character
+    /** Sets the moving status of the character
      * @param isMoving
      */
     void setMoving(bool isMoving);
 
-    /** Check if the status is moving
-     * @return
+    /** Checks if the status is moving
+     * @return true if the object is moving
      */
     bool checkMoving() const;
 
-    /** Set the moving direction
+    /** Sets the moving direction
      * @param direction
      */
     virtual void setDirection(Direction direction);
 
-    /** Get the moving direction
-     * @return
+    /** Returns the moving direction
+     * @return the current moving direction
      */
     Direction getDirection() const;
 
-    /** Update the position
+    /** Updates the position
      * @return true if the character has moved
      */
     void updatePosition();
 
 protected:
-    float speed;
-    bool isMoving;
-    Direction movingDirection;
+    float speed; // the speed of the object
+    bool isMoving; // if the object is moving
+    Direction movingDirection; // the current moving direction
 };
 
 class ECE_Ghost : public ECE_Character{
@@ -104,13 +102,7 @@ class ECE_Pacman : public ECE_Character
 public:
     ECE_Pacman(ECE_Map &map, float x, float y);
     ~ECE_Pacman();
-
     void setDirection(Direction direction) override;
-
-    /** An additional function to specify the coordinate to display
-     * @param cX
-     * @param cY
-     */
     void display() override;
 };
 

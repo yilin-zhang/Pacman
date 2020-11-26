@@ -1,10 +1,6 @@
-/*
-Author: Yilin Zhang
-Class: ECE6122
-Last Date Modified: 10/24/2020
-Description:
-Class definitions
-*/
+//
+// Created by Yilin Zhang on 11/24/20.
+//
 
 #include <cmath>
 #include "Objects.h"
@@ -170,6 +166,7 @@ void ECE_Character::updatePosition()
     if (isMoving)
         move(movingDirection, speed);
 }
+
 //////////////////////////////////////////////////
 /// ECE_Ghost
 //////////////////////////////////////////////////

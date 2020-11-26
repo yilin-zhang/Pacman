@@ -14,42 +14,43 @@ public:
 
     enum ObjectType {Coin, Power, Pacman, Path, NoPath, Gate};
 
-    /** Validate the given position
+    /** Validates the given position
      * @param x
      * @param y
-     * @return
+     * @return true if the position is valid
      */
     bool validatePosition(int x, int y) const;
 
-    /** Validate the given position
+    /** Validates the given position
      * @param x
      * @param y
-     * @return
+     * @return true if the position is valid
      */
     bool validatePosition(float x, float y) const;
 
-    /** Validate the given position and assume the gate is open
+    /** Validates the given position and assume the gate is open
      * @param x
      * @param y
-     * @return
+     * @return true if the position is valid
      */
     bool validatePositionWhenGateOpen(int x, int y) const;
 
-    /** Validate the given position and assume the gate is open
+    /** Validates the given position and assume the gate is open
      * @param x
      * @param y
-     * @return
+     * @return true if the position is valid
      */
     bool validatePositionWhenGateOpen(float x, float y) const;
 
-    /** Get the object type at the position (x, y)
+    /** Returns the object type at the position (x, y)
      * @param x
      * @param y
-     * @return
+     * @return true if the position is valid
      */
     ObjectType getObjectType(int x, int y) const;
 
 private:
+    /** Initialize the `initialMap` that contains the positions of all the objects at the beginning */
     void initializeObjects();
     std::array<std::array<ObjectType, MAZE_COLS>, MAZE_ROWS> initialMap; // x and y are reversed
 };
