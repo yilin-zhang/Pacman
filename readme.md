@@ -16,14 +16,14 @@ you have Homebrew and follow the command below:
 brew install llvm libomp
 ```
 
-The top level `CMakeLists.txt` is for both macOS Mojave and Arch Linux. To build
+The `CMakeLists.txt` in `src/` is for both macOS Mojave and Arch Linux. To build
 the program, make sure you are in the project directory, then follow the
 commands below:
 
 ```sh
 mkdir build
 cd build/
-cmake ..
+cmake ../src
 make
 ./Pacman
 ```
