@@ -64,7 +64,7 @@ void PathFinder::updateGhostDirection(const ECE_Pacman &pacman, ECE_Ghost &ghost
     if (ghostGridY == 10 && ghostGridX <= 9 && ghostGridX >= 7)
         isInHome = true;
 
-    Direction nextDirection = UP;
+    Direction nextDirection = currentDirection;
     float distance2ToCompare;
     if (isChasing || isInHome)
         distance2ToCompare = 100000.f;
