@@ -21,12 +21,15 @@ public:
     void display();
 
     void keyboard(unsigned char key);
+    void keyboard(int key);
 
     void reset();
 
 private:
     void initializeObjects();
     void releaseResources();
+
+    void start();
 
     /** Check the current state and do some updates
      */

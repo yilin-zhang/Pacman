@@ -75,17 +75,8 @@ void Game::display()
 
 void Game::keyboard(unsigned char key)
 {
-    if (!(key == 'w' || key == 's' || key == 'a' || key == 'd'))
-        return;
-
-    isRunning = true;
-
-    if (!pacman.checkMoving())
-        pacman.setMoving(true);
-
-    for (auto & ghost : ghosts)
-        if (ghost && !ghost->checkMoving())
-            ghost->setMoving(true);
+    if (!isRunning)
+        start();
 
     switch(key)
     {
@@ -99,6 +90,28 @@ void Game::keyboard(unsigned char key)
             pacman.setDirection(LEFT);
             break;
         case 'd':
+            pacman.setDirection(RIGHT);
+            break;
+    }
+}
+
+void Game::keyboard(int key)
+{
+    if (!isRunning)
+        start();
+
+    switch(key)
+    {
+        case GLUT_KEY_UP:
+            pacman.setDirection(UP);
+            break;
+        case GLUT_KEY_DOWN:
+            pacman.setDirection(DOWN);
+            break;
+        case GLUT_KEY_LEFT:
+            pacman.setDirection(LEFT);
+            break;
+        case GLUT_KEY_RIGHT:
             pacman.setDirection(RIGHT);
             break;
     }
@@ -164,6 +177,18 @@ void Game::releaseResources()
         delete power;
         power = nullptr;
     }
+}
+
+void Game::start()
+{
+    isRunning = true;
+
+    if (!pacman.checkMoving())
+        pacman.setMoving(true);
+
+    for (auto & ghost : ghosts)
+        if (ghost && !ghost->checkMoving())
+            ghost->setMoving(true);
 }
 
 void Game::check()
@@ -314,7 +339,7 @@ void Game::checkGhostRespawn()
                     ghost = new ECE_Ghost(map, 8.f, 10.f, ghostColors[ghostId]);
                 else
                     ghost = new ECE_Ghost(map, 8.f, 10.f, ECE_Color::WHITE);
-
+                ghost->setMoving(true);
                 lastGhostRebirthTimer.start(MIN_RESPAWN_DURATION); // start the timer
             }
         }

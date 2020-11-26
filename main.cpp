@@ -56,10 +56,13 @@ void reshape(int w, int h)
 void keyboard(unsigned char key, int x, int y)
 {
     if (key == 'r' || key == 'R')
-    {
         angle = (angle + 5) % 360;
-    }
+    else
+        game.keyboard(key);
+}
 
+void specialKeyboard(int key, int x, int y)
+{
     game.keyboard(key);
 }
 
@@ -82,6 +85,7 @@ int main(int argc, char** argv)
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
     glutKeyboardFunc(keyboard);
+    glutSpecialFunc(specialKeyboard);
     glutTimerFunc(FRAME_TIME, frameUpdateTimer, 0);
 
     glEnable(GL_LIGHTING);
