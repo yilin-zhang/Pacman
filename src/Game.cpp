@@ -194,8 +194,6 @@ void Game::start()
 void Game::check()
 {
     // 1. check the status of each ghost and take some actions
-    // - the pacman dies if he's too close to the ghost
-    // - set a new direction to the ghost if it's needed
     checkGhosts();
     // 2. check the status of each coin and take some actions
     checkCoins();
