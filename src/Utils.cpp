@@ -3,7 +3,6 @@
 //
 
 #include "Utils.h"
-#include <iostream>
 
 void colorToRGBf(ECE_Color color, float &red, float &green, float &blue)
 {

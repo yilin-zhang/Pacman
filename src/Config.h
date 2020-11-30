@@ -16,7 +16,6 @@
 #include <GL/glut.h>
 #endif
 
-#include <vector>
 #include <string>
 #include <omp.h>
 

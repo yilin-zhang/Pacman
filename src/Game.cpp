@@ -193,21 +193,20 @@ void Game::start()
 
 void Game::check()
 {
-    // 1. isFinished if the ghosts need to change their directions
+    // 1. check the status of each ghost and take some actions
+    // - the pacman dies if he's too close to the ghost
+    // - set a new direction to the ghost if it's needed
     checkGhosts();
-
-    // 2. isFinished if the pacman is close to a coin or a power
-    // remove the coin if they are close
+    // 2. check the status of each coin and take some actions
     checkCoins();
+    // 3. check the status of each power-up and take some actions
     checkPowers();
-
-    // 3. isFinished if the board is clear
+    // 4. check if the game board is clear
     checkClear();
-
-    // 4. check if a ghost should respawn
+    // 5. check if a ghost should respawn
     checkGhostRespawn();
 
-    // isFinished if powered up
+    // update the powerUpTimer
     if (isPoweredUp)
     {
         powerUpTimer.update();
@@ -233,7 +232,7 @@ void Game::checkGhosts()
 
         ghost->getPosition(ghostX, ghostY);
 
-        // isFinished if the pacman and the ghost is very close
+        // take some actions if the pacman and the ghost is very close
         if (sqrt(pow(ghostX - pacmanX, 2) + pow(ghostY - pacmanY, 2))
             <= DISTANCE_THRESHOLD)
         {

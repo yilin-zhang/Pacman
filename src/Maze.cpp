@@ -2,8 +2,6 @@
 // Created by Yilin Zhang on 11/17/20.
 //
 
-#include <fstream>
-#include <iostream>
 #include "Maze.h"
 #include "Utils.h"
 
